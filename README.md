@@ -1,26 +1,106 @@
 # Kapil Jangid — Portfolio
 
-Production portfolio for Kapil Jangid, an AI driven full stack developer. Built with Next.js App Router, TypeScript, Tailwind CSS, Framer Motion, and Lucide.
+A route-based personal portfolio for Kapil Jangid, an AI-driven full-stack developer. The interface uses a near-black cyberpunk poster system with chrome type, cyan and violet illumination, accessible navigation, and responsive desktop/mobile compositions.
 
-## Production checks
+## Stack
+
+- Next.js 16 App Router
+- React 19 and TypeScript
+- Tailwind CSS 4 and project CSS tokens
+- Framer Motion
+- Lucide icons
+
+## Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Home / portfolio introduction |
+| `/about` | Biography, education, and capabilities |
+| `/projects` | Project showcase |
+| `/journey` | Experience and learning journey |
+| `/services` | Services |
+| `/contact` | Contact options and form |
+| `/assistant` | GokuBot, the grounded portfolio assistant |
+| `/extras` | Learning, tools, gaming, setup, and website notes |
+| `/social` | Social directory |
+| `/certifications`, `/achievements`, `/blogs`, `/open-source` | Supporting portfolio routes |
+
+## Content and assets
+
+Portfolio facts are centralised in [`data/portfolio.ts`](data/portfolio.ts). Update this source before changing route components.
+
+- `projects`, `education`, `experience`, and `services` contain verified portfolio content.
+- `socialProfiles` drives the `/social` grid. GitHub, LinkedIn, and Email are verified. Other listed platforms are explicitly marked as demo links until Kapil’s exact profile URLs are supplied.
+- [`data/assistantKnowledge.ts`](data/assistantKnowledge.ts) derives GokuBot’s grounded records from centralised portfolio data.
+- The original portrait is stored in `public/profile/`.
+- The downloadable résumé is `public/resume/kapil-jangid-resume.pdf`.
+
+## GokuBot
+
+GokuBot is an AI portfolio assistant, not an impersonation of Kapil. It answers supported questions using verified local portfolio records and keeps conversation history in the visitor’s browser session only.
+
+`GET /api/assistant` reports a sanitised capability state:
+
+- `ONLINE`: a configured provider is reachable and verified retrieval is available.
+- `LIMITED MODE`: verified local retrieval is available.
+- `OFFLINE`: neither capability is available.
+
+No provider credentials are sent to the browser. If `GEMINI_API_KEY` is configured, the health check performs a short server-side reachability check; without it, the assistant remains in verified local retrieval mode.
+
+## Local development
+
+### Prerequisites
+
+- Node.js 20 or later
+- npm
+
+### Install and run
 
 ```bash
+npm install
+npm run dev
+```
+
+Use the local address printed by Next.js after the server starts.
+
+### Validate and build
+
+```bash
+npm run lint
+npx tsc --noEmit
 npm run build
 npm start
 ```
 
-The site includes six focused routes: Home, About, Projects, Journey, Services, and Contact. The résumé is served at `/resume/kapil-jangid-resume.pdf`; the contact form provides a production-safe email-client fallback.
+There is currently no automated `test` script in `package.json`.
 
-## Content and assets
+## Environment configuration
 
-- Portfolio content: `data/portfolio.ts`
-- Original hero portrait: `public/profile/kapil-hero-2026.png`
-- Project visuals: `public/projects/`
-- Résumé: `public/resume/kapil-jangid-resume.pdf`
+Copy `.env.example` to `.env.local` when configuring optional services.
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_CONTACT_FORM_ENDPOINT` | Optional contact form endpoint. Without it, the contact flow uses a `mailto:` link. |
+| `GEMINI_API_KEY` | Optional server-only provider key used by the assistant health check. Never expose this value with a `NEXT_PUBLIC_` prefix. |
+
+## Accessibility and responsive behaviour
+
+- Keyboard-accessible desktop navigation and touch-safe mobile navigation
+- Visible focus indicators and reduced-motion support
+- Responsive grids and safe-area spacing
+- GokuBot supports Enter to send, Shift + Enter for a new line, and Escape to stop a request
+- The mobile composer accounts for dynamic viewports and virtual keyboards where the browser exposes the Visual Viewport API
 
 ## Deployment
 
-Deploy on any platform that supports Next.js 16. Before publishing, set `siteConfig.canonicalUrl` in `data/portfolio.ts` to the final public domain.
+Deploy to any platform that supports Next.js 16. For Vercel, import the repository and use the default Next.js build settings.
+
+Before going live:
+
+1. Set `siteConfig.canonicalUrl` in `data/portfolio.ts` to the production domain.
+2. Replace every social demo link with Kapil’s verified profile URL, or remove it.
+3. Confirm résumé access, project links, contact flow, and every route.
+4. Run linting, TypeScript validation, and the production build.
 
 ## Licence
 
