@@ -7,7 +7,7 @@ import { siteConfig } from "@/data/portfolio";
 
 const items = [
   ["Home", "/", Home], ["About", "/about", UserRound], ["Projects", "/projects", FolderKanban], ["Journey", "/journey", Route], ["Services", "/services", Sparkles], ["Contact", "/contact", Send],
-  ["Certifications", "/certifications", BadgeCheck], ["Achievements", "/achievements", Award], ["Blogs", "/blogs", BookOpen], ["Open Source", "/open-source", Code2], ["Social", "/social", Globe2], ["Assistant", "/assistant", Bot], ["Extras", "/extras", Sparkles],
+  ["Certifications", "/certifications", BadgeCheck], ["Achievements", "/achievements", Award], ["Blogs", "/blogs", BookOpen], ["Open Source", "/open-source", Code2], ["Social", "/social", Globe2], ["GokuBot", "/assistant", Bot], ["Extras", "/extras", Sparkles],
 ] as const;
 
 export function Navbar() {

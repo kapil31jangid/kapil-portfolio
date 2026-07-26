@@ -12,6 +12,20 @@ import type {
   SkillCategory,
   SocialLink,
 } from "@/types/portfolio";
+import type { ComponentType } from "react";
+import { AtSign, BadgeCheck, BarChart3, BookOpen, CodeXml, Gamepad2, Github, Instagram, Linkedin, Mail, MessageCircle, PenLine, Trophy, UsersRound } from "lucide-react";
+
+export type SocialProfile = {
+  name: string;
+  username?: string;
+  description: string;
+  url: string;
+  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  category: "professional" | "developer" | "content" | "community" | "contact";
+  featured?: boolean;
+  external: boolean;
+  demo?: boolean;
+};
 
 export const siteConfig = {
   name: "Kapil Jangid",
@@ -59,22 +73,18 @@ export const assistantKnowledge = {
 };
 
 export const websiteDetails = [
-  "A focused portfolio for sharing verified work, learning, and ways to collaborate.",
-  "Designed as a cyberpunk poster environment with Next.js, TypeScript, Tailwind CSS, Framer Motion, and Lucide.",
+  "A focused personal site for sharing verified work, learning, and ways to collaborate.",
+  "Designed as a cyberpunk poster environment with accessible, responsive interaction patterns.",
   "Built with responsive layouts, keyboard focus states, reduced-motion support, and optimised local assets.",
-  "Portfolio content is maintained centrally in data/portfolio.ts. AI-assisted tools were used during development; all public biographical content remains verified.",
+  "Content is maintained centrally. AI-assisted tools were used during development; all public biographical content remains verified.",
 ];
 
 export const extras = [
   {
     id: "learning",
-    number: "01",
     title: "Current Learning",
     introduction: "A focused learning log built around the systems and communities shaping Kapil’s next projects.",
     metadata: "Learning log · Active exploration",
-    featuredMedia: undefined,
-    featuredAlt: undefined,
-    gallery: undefined,
     items: [
       { title: "Python", detail: "Strengthening practical programming foundations for AI, data, and product development." },
       { title: "Data Structures", detail: "Building stronger problem-solving and core computer science foundations." },
@@ -83,33 +93,21 @@ export const extras = [
   },
   {
     id: "tools",
-    number: "02",
     title: "Favourite Tools",
     introduction: "A practical development loadout for turning ideas into responsive, maintainable products.",
-    metadata: "Development loadout · Portfolio projects",
-    featuredMedia: undefined,
-    featuredAlt: undefined,
-    gallery: undefined,
+    metadata: "Development loadout · Personal projects",
     items: [
       { title: "VS Code", detail: "Primary code editor listed in Kapil’s development tools." },
       { title: "Git and GitHub", detail: "Version control and public repository workflow." },
       { title: "Docker and Linux", detail: "Tools for repeatable environments and development workflows." },
-      { title: "Next.js, FastAPI and Supabase", detail: "A recurring stack across full stack and AI product work." },
+      { title: "Web, API and data services", detail: "A recurring application stack across full stack and AI product work." },
     ],
   },
   {
     id: "gaming",
-    number: "03",
     title: "Gaming and Strategy",
     introduction: "Gaming is a personal interest that keeps Kapil curious about strategy, creativity, systems, and competitive thinking beyond development work.",
-    metadata: "Personal interest · Verified portfolio note",
-    featuredMedia: undefined,
-    featuredAlt: undefined,
-    gallery: [
-      { src: "/extras/game-library-collection.jpeg", alt: "Kapil's game library collection" },
-      { src: "/extras/game-library-played.jpeg", alt: "Kapil's played game library" },
-      { src: "/extras/game-trophy-progress.png", alt: "Kapil's game trophy progress" },
-    ],
+    metadata: "Personal interest · Verified note",
     items: [
       { title: "Strategy", detail: "Exploring decision-making, planning, and adaptation through games." },
       { title: "Creative Thinking", detail: "Appreciating the systems, storytelling, and problem-solving that games can bring together." },
@@ -118,13 +116,9 @@ export const extras = [
   },
   {
     id: "setup",
-    number: "04",
     title: "Workspace and Setup",
     introduction: "A lean build environment centred on tools already used across Kapil’s development practice.",
     metadata: "Build environment · No hardware claims",
-    featuredMedia: undefined,
-    featuredAlt: undefined,
-    gallery: undefined,
     items: [
       { title: "Linux", detail: "A listed development platform for hands-on engineering workflows." },
       { title: "TypeScript and React", detail: "Core tools for responsive interface implementation." },
@@ -133,13 +127,9 @@ export const extras = [
   },
   {
     id: "website",
-    number: "05",
     title: "Behind This Website",
-    introduction: "This portfolio transforms Kapil’s poster-inspired visual identity into an immersive route-based experience for presenting work clearly across devices.",
-    metadata: "Next.js · TypeScript · Accessibility aware",
-    featuredMedia: "/extras/behind-website-poster.png",
-    featuredAlt: "Kapil Jangid cyberpunk portfolio poster",
-    gallery: undefined,
+    introduction: "This site transforms Kapil’s poster-inspired visual identity into an immersive route-based experience for presenting work clearly across devices.",
+    metadata: "Site systems · Accessibility aware",
     items: websiteDetails.map((detail) => ({ title: "Design note", detail })),
   },
 ] as const;
@@ -157,23 +147,154 @@ export const navigation: NavItem[] = [
   { label: "Contact", href: "#contact" },
 ];
 
-export const socialLinks: SocialLink[] = [
+export const socialProfiles: SocialProfile[] = [
   {
-    label: "GitHub",
-    href: "https://github.com/kapil31jangid",
-    icon: "github",
+    name: "GitHub",
+    username: "@kapil31jangid",
+    description: "Code and open-source work",
+    url: "https://github.com/kapil31jangid",
+    icon: Github,
+    category: "developer",
+    featured: true,
+    external: true,
   },
   {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/kapil31jangid",
-    icon: "linkedin",
+    name: "LinkedIn",
+    username: "kapil31jangid",
+    description: "Professional profile",
+    url: "https://www.linkedin.com/in/kapil31jangid",
+    icon: Linkedin,
+    category: "professional",
+    featured: true,
+    external: true,
   },
   {
-    label: "Email",
-    href: "mailto:kapil31jangid@gmail.com",
-    icon: "email",
+    name: "Instagram",
+    username: "Demo link",
+    description: "Community and personal updates",
+    url: "https://www.instagram.com/",
+    icon: Instagram,
+    category: "community",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Credly",
+    username: "Demo link",
+    description: "Verified digital credentials",
+    url: "https://www.credly.com/",
+    icon: BadgeCheck,
+    category: "professional",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Reddit",
+    username: "Demo link",
+    description: "Community participation",
+    url: "https://www.reddit.com/",
+    icon: MessageCircle,
+    category: "community",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Kaggle",
+    username: "Demo link",
+    description: "Data science profile",
+    url: "https://www.kaggle.com/",
+    icon: BarChart3,
+    category: "developer",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Peerlist",
+    username: "Demo link",
+    description: "Developer profile",
+    url: "https://peerlist.io/",
+    icon: UsersRound,
+    category: "developer",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "X",
+    username: "Demo link",
+    description: "Technology updates",
+    url: "https://x.com/",
+    icon: AtSign,
+    category: "community",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Hashnode",
+    username: "Demo link",
+    description: "Technical writing",
+    url: "https://hashnode.com/",
+    icon: PenLine,
+    category: "content",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Medium",
+    username: "Demo link",
+    description: "Articles and insights",
+    url: "https://medium.com/",
+    icon: BookOpen,
+    category: "content",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "LeetCode",
+    username: "Demo link",
+    description: "Problem-solving profile",
+    url: "https://leetcode.com/",
+    icon: CodeXml,
+    category: "developer",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "HackerRank",
+    username: "Demo link",
+    description: "Coding skills profile",
+    url: "https://www.hackerrank.com/",
+    icon: Trophy,
+    category: "developer",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "PlayStation",
+    username: "Demo link",
+    description: "Gaming profile",
+    url: "https://www.playstation.com/",
+    icon: Gamepad2,
+    category: "community",
+    external: true,
+    demo: true,
+  },
+  {
+    name: "Email",
+    username: siteConfig.email,
+    description: "Direct professional contact",
+    url: `mailto:${siteConfig.email}`,
+    icon: Mail,
+    category: "contact",
+    featured: true,
+    external: false,
   },
 ];
+
+export const socialLinks: SocialLink[] = socialProfiles.filter((profile) => !profile.demo).map((profile) => ({
+  label: profile.name,
+  href: profile.url,
+  icon: profile.name === "GitHub" ? "github" : profile.name === "LinkedIn" ? "linkedin" : "email",
+}));
 
 export const aboutParagraphs = [
   "I am pursuing a Bachelor of Technology in Computer Science and Engineering at Silver Oak University alongside a Bachelor of Science in Data Science and Applications at the Indian Institute of Technology Madras.",

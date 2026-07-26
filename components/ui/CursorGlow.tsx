@@ -13,7 +13,7 @@ export function CursorGlow() {
     const isDesktop = window.matchMedia("(min-width: 1024px)");
 
     const updateVisibility = () => {
-      glow.hidden = prefersReduced.matches || !isDesktop.matches;
+      glow.hidden = prefersReduced.matches || !isDesktop.matches || document.hidden;
     };
 
     updateVisibility();
@@ -24,11 +24,13 @@ export function CursorGlow() {
 
     prefersReduced.addEventListener("change", updateVisibility);
     isDesktop.addEventListener("change", updateVisibility);
+    document.addEventListener("visibilitychange", updateVisibility);
     window.addEventListener("mousemove", handleMove, { passive: true });
 
     return () => {
       prefersReduced.removeEventListener("change", updateVisibility);
       isDesktop.removeEventListener("change", updateVisibility);
+      document.removeEventListener("visibilitychange", updateVisibility);
       window.removeEventListener("mousemove", handleMove);
     };
   }, []);

@@ -4,8 +4,8 @@ import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight, Download, ExternalLink, Github, Mail, Send, Award, BadgeCheck, BookOpen, Bot, Linkedin } from "lucide-react";
-import { aboutParagraphs, achievements, assistantKnowledge, certifications, currentFocus, education, experience, extras, projects, services, siteConfig, skillCategories, socialLinks } from "@/data/portfolio";
+import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight, Download, ExternalLink, Github, Mail, Send, Award, BadgeCheck, BookOpen, Bot } from "lucide-react";
+import { aboutParagraphs, achievements, assistantKnowledge, certifications, currentFocus, education, experience, extras, projects, services, siteConfig, skillCategories, socialProfiles } from "@/data/portfolio";
 import { ParticlesBackground } from "@/components/ui/ParticlesBackground";
 
 type View = "home" | "about" | "projects" | "journey" | "services" | "contact" | "certifications" | "achievements" | "blogs" | "open-source" | "social" | "assistant" | "extras";
@@ -13,8 +13,9 @@ const titles: Record<Exclude<View, "home">, string> = { about: "The person behin
 
 function Frame({ children, view }: { children: React.ReactNode; view: View }) {
   const reduced = useReducedMotion();
+  const extrasEnvironment = view === "extras";
   return <AnimatePresence mode="wait"><motion.section key={view} className={`screen screen-${view}`} initial={reduced ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? undefined : { opacity: 0, y: -12 }} transition={{ duration: .46, ease: "easeOut" }}>
-    <div className="poster-grid" aria-hidden="true" /><div className="circuit-field" aria-hidden="true" /><ParticlesBackground density={25} />{children}
+    {extrasEnvironment ? <><div className="extras-environment" aria-hidden="true"><div className="extras-grid" /><div className="extras-circuits" /><div className="extras-beam" /></div></> : <><div className="poster-grid" aria-hidden="true" /><div className="circuit-field" aria-hidden="true" /><ParticlesBackground density={25} /></>}{children}
   </motion.section></AnimatePresence>;
 }
 
@@ -34,7 +35,13 @@ function Services() { return <Frame view="services"><PageTitle view="services" /
 function Contact() { const [sent,setSent]=useState(false); const submit=(e:FormEvent<HTMLFormElement>)=>{e.preventDefault(); const form=new FormData(e.currentTarget); const name=String(form.get("name")||""); const email=String(form.get("email")||""); const message=String(form.get("message")||""); window.location.href=`mailto:${siteConfig.email}?subject=${encodeURIComponent(`Portfolio contact — ${name}`)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`; setSent(true);}; return <Frame view="contact"><PageTitle view="contact" /><div className="contact-layout"><div><p className="contact-copy">{siteConfig.contactAvailability}</p><a href={`mailto:${siteConfig.email}`} className="contact-email focus-ring"><Mail />{siteConfig.email}</a><p className="location">Ahmedabad, Gujarat, India<br />IST · UTC +5:30</p></div><form className="contact-form" onSubmit={submit}><label>Name<input name="name" required /></label><label>Email<input name="email" type="email" required /></label><label>Tell me about it<textarea name="message" required minLength={20} /></label><button className="focus-ring" type="submit"><Send /> Send message</button>{sent&&<p role="status">Opening your email client with your message.</p>}</form></div></Frame>; }
 
 function ExtrasExplorer() {
-  return <Frame view="extras"><div className="extras-kicker"><span>07 / Beyond the code</span><p>A collection of the tools, ideas, creative experiments and experiences that shape how I learn, build and contribute beyond the code.</p></div><main className="extras-single-page">{extras.map((item) => <article id={item.id} key={item.id} className="extras-single-section"><div className="extras-single-heading"><p>{item.number}</p><Label>{item.metadata}</Label><h1>{item.title}</h1><p>{item.introduction}</p></div>{item.gallery ? <div className="extras-game-gallery">{item.gallery.map((image) => <Image key={image.src} src={image.src} alt={image.alt} width={440} height={780} sizes="(max-width: 767px) 44vw, 17vw" />)}</div> : item.featuredMedia ? <div className="extras-media"><Image src={item.featuredMedia} alt={item.featuredAlt ?? ""} fill sizes="(max-width: 767px) 92vw, 32vw" /></div> : <div className="extras-signal" aria-hidden="true"><span>{item.number}</span><i /><i /><i /></div>}<div className="extras-details"><p className="eyebrow">{"// Field notes"}</p>{item.items.map((entry, index) => <div key={entry.title}><b>{String(index + 1).padStart(2, "0")}</b><h2>{entry.title}</h2><p>{entry.detail}</p></div>)}</div></article>)}</main></Frame>;
+  return <Frame view="extras">
+    <header className="extras-kicker"><span>Beyond the code</span><p>A collection of the tools, ideas and experiences that shape how I learn, build and contribute beyond the code.</p></header>
+    <main className="extras-single-page">{extras.map((item) => <article id={item.id} key={item.id} className="extras-single-section">
+      <div className="extras-single-heading"><Label>{item.metadata}</Label><h1>{item.title}</h1><p>{item.introduction}</p></div>
+      <div className="extras-details"><p className="eyebrow">{"// Field notes"}</p>{item.items.map((entry, index) => <div key={`${entry.title}-${index}`}><h2>{entry.title}</h2><p>{entry.detail}</p></div>)}</div>
+    </article>)}</main>
+  </Frame>;
 }
 
 function Secondary({ view }: { view: Exclude<View, "home" | "about" | "projects" | "journey" | "services" | "contact"> }) {
@@ -45,7 +52,7 @@ function Secondary({ view }: { view: Exclude<View, "home" | "about" | "projects"
     {view === "achievements" && <div className="editorial-list">{achievements.map((item, i) => <article key={item.title}><span>0{i + 1}</span><div><h2>{item.title}</h2><p>{item.description}</p><small>{item.date}</small></div><Award /></article>)}</div>}
     {view === "blogs" && <div className="empty-editorial"><BookOpen /><h2>Verified writing archive</h2><p>No verified publication link has been supplied yet. This route intentionally does not fabricate articles or reading metrics.</p></div>}
     {view === "open-source" && <div className="editorial-list">{sourceProjects.map((item, i) => <article key={item.id}><span>0{i + 1}</span><div><h2>{item.name}</h2><p>{item.contribution}</p><small>{item.stack.join(" · ")}</small></div><a href={item.github} target="_blank" rel="noopener noreferrer" className="focus-ring" aria-label={`${item.name} repository`}><Github /></a></article>)}</div>}
-    {view === "social" && <div className="editorial-list">{socialLinks.map((item, i) => <article key={item.label}><span>0{i + 1}</span><div><h2>{item.label}</h2><p>{item.label === "Email" ? "Direct professional contact" : "Professional profile"}</p><small>{item.href.replace("mailto:", "")}</small></div><a href={item.href} target={item.icon === "email" ? undefined : "_blank"} rel={item.icon === "email" ? undefined : "noopener noreferrer"} className="focus-ring" aria-label={item.label}>{item.icon === "github" ? <Github /> : item.icon === "linkedin" ? <Linkedin /> : <Mail />}</a></article>)}</div>}
+    {view === "social" && <><p className="social-support">Explore my professional profiles, developer communities, technical writing and direct contact channels.</p><div className="social-directory">{socialProfiles.map((profile) => { const Icon = profile.icon; const demoLabel = profile.demo ? "Demo link — profile URL pending verification" : profile.category; return <a key={profile.name} href={profile.url} target={profile.external ? "_blank" : undefined} rel={profile.external ? "noopener noreferrer" : undefined} className={`social-entry focus-ring ${profile.featured ? "featured" : ""}`} aria-label={profile.demo ? `Open demo link for ${profile.name}` : profile.external ? `Open Kapil Jangid’s ${profile.name} profile` : "Email Kapil Jangid"}><Icon aria-hidden={true} className="social-entry-icon" /><span className="social-entry-copy"><small>{demoLabel}</small><b>{profile.name}</b>{profile.username && <em>{profile.username}</em>}<span>{profile.description}</span></span>{profile.external ? <ArrowUpRight className="social-entry-link" aria-hidden="true" /> : <Mail className="social-entry-link" aria-hidden="true" />}</a>; })}</div></>}
     {view === "assistant" && <div className="assistant-state"><Bot /><Label>KJ Assistant</Label><h2>Grounded portfolio guidance.</h2><p>{assistantKnowledge.unavailableMessage}</p><div>{assistantKnowledge.suggestedQuestions.map(question => <span key={question}>{question}</span>)}</div><a className="text-link focus-ring" href={`mailto:${siteConfig.email}`}><Mail /> Ask Kapil directly</a></div>}
   </Frame>;
 }

@@ -112,7 +112,7 @@ export const assistantSuggestedQuestions = [
   "What are Kapil’s strongest technical skills?",
   "Show me Kapil’s best AI projects.",
   "Tell me about RetailOS.",
-  "What is Kapil currently studying?",
+  "What is Kapil studying?",
   "What community experience does Kapil have?",
   "How can I work with Kapil?",
 ] as const;
