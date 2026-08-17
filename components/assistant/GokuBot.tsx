@@ -3,7 +3,7 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Bot, Copy, Eraser, ExternalLink, LoaderCircle, Plus, Send, ShieldCheck, Square, X } from "lucide-react";
+import { Bot, Copy, Eraser, ExternalLink, LoaderCircle, Plus, Send, ShieldCheck, Square } from "lucide-react";
 import { assistantSuggestedQuestions } from "@/data/assistantKnowledge";
 
 type Source = { label: string; href: string; external?: boolean };
@@ -13,14 +13,14 @@ type Availability = "checking" | "online" | "limited" | "offline";
 const welcome: Message = {
   id: "welcome",
   role: "assistant",
-  text: "Hey! I’m GokuBot, Kapil’s AI portfolio assistant. I can help you explore his projects, technical skills, education, community experience, achievements, services and ways to connect with him. What would you like to know?",
+  text: "Hey, I’m GokuBot. I can help you explore Kapil’s projects, technical skills, studies and community experience. What would you like to know?",
 };
 
 const availabilityDetails: Record<Availability, { label: string; description: string }> = {
-  checking: { label: "CHECKING", description: "Checking GokuBot availability." },
-  online: { label: "ONLINE", description: "AI provider and verified portfolio retrieval are available." },
-  limited: { label: "LIMITED MODE", description: "Verified local portfolio retrieval is available. Responses are limited to locally verified portfolio information." },
-  offline: { label: "OFFLINE", description: "GokuBot and its local portfolio retrieval are unavailable." },
+  checking: { label: "Checking", description: "Checking GokuBot’s available capabilities." },
+  online: { label: "Online", description: "AI assistance and verified portfolio retrieval are available." },
+  limited: { label: "Limited mode", description: "Verified portfolio answers" },
+  offline: { label: "Offline", description: "GokuBot is temporarily unavailable." },
 };
 
 export function GokuBot() {
@@ -33,14 +33,17 @@ export function GokuBot() {
   const [error, setError] = useState("");
   const [lastQuestion, setLastQuestion] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState("");
+  const [showJumpToLatest, setShowJumpToLatest] = useState(false);
   const controller = useRef<AbortController | null>(null);
-  const screen = useRef<HTMLElement>(null);
+  const composerInput = useRef<HTMLTextAreaElement>(null);
   const log = useRef<HTMLDivElement>(null);
   const logEnd = useRef<HTMLDivElement>(null);
   const sessionId = useRef("");
   const nearLatest = useRef(true);
   const copyResetTimer = useRef<number | null>(null);
   const hasConversation = messages.some((message) => message.role === "user");
+  const showSuggestions = hydrated && !hasConversation;
   const isThinking = status === "thinking";
   const availabilityInfo = availabilityDetails[availability];
 
@@ -67,24 +70,6 @@ export function GokuBot() {
   }, []);
 
   useEffect(() => {
-    const viewport = window.visualViewport;
-    const screenElement = screen.current;
-    const updateKeyboardOffset = () => {
-      if (!viewport || !screenElement) return;
-      const offset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
-      screenElement.style.setProperty("--gokubot-keyboard-offset", `${offset}px`);
-    };
-    updateKeyboardOffset();
-    viewport?.addEventListener("resize", updateKeyboardOffset);
-    viewport?.addEventListener("scroll", updateKeyboardOffset);
-    return () => {
-      viewport?.removeEventListener("resize", updateKeyboardOffset);
-      viewport?.removeEventListener("scroll", updateKeyboardOffset);
-      screenElement?.style.removeProperty("--gokubot-keyboard-offset");
-    };
-  }, []);
-
-  useEffect(() => {
     if (hydrated) window.sessionStorage.setItem("gokubot-history", JSON.stringify(messages.slice(-20)));
   }, [messages, hydrated]);
 
@@ -103,7 +88,10 @@ export function GokuBot() {
       }
     };
     void checkAvailability();
-    return () => { cancelled = true; if (retry) window.clearTimeout(retry); };
+    return () => {
+      cancelled = true;
+      if (retry) window.clearTimeout(retry);
+    };
   }, []);
 
   useEffect(() => {
@@ -113,32 +101,53 @@ export function GokuBot() {
 
   useEffect(() => {
     const onEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") controller.current?.abort();
+      if (event.key === "Escape" && status === "thinking") controller.current?.abort();
     };
     window.addEventListener("keydown", onEscape);
     return () => window.removeEventListener("keydown", onEscape);
-  }, []);
+  }, [status]);
 
   const updateScrollPosition = () => {
     const element = log.current;
     if (!element) return;
-    nearLatest.current = element.scrollHeight - element.scrollTop - element.clientHeight < 96;
+    const isNearLatest = element.scrollHeight - element.scrollTop - element.clientHeight < 96;
+    nearLatest.current = isNearLatest;
+    setShowJumpToLatest(hasConversation && !isNearLatest);
   };
 
-  const ask = async (question?: string) => {
-    if (availability === "offline") { setStatus("error"); return; }
-    if (availability === "checking") { setError("GokuBot is still checking availability. Please wait a moment."); return; }
+  const jumpToLatest = () => {
+    nearLatest.current = true;
+    setShowJumpToLatest(false);
+    logEnd.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "end" });
+  };
+
+  const ask = async (question?: string, isRetry = false) => {
+    if (availability === "offline") {
+      setError("GokuBot is temporarily unavailable. Please explore Kapil’s portfolio directly.");
+      setStatus("error");
+      return;
+    }
+    if (availability === "checking") {
+      setError("GokuBot is still checking availability. Please wait a moment.");
+      return;
+    }
     const message = (question ?? draft).trim();
-    if (!message) { setError("Enter a question for GokuBot."); return; }
-    if (message.length > 1200) { setError("Please keep your message under 1,200 characters."); return; }
+    if (!message) {
+      setError("Enter a question for GokuBot.");
+      return;
+    }
+    if (message.length > 1200) {
+      setError("Please keep your message under 1,200 characters.");
+      return;
+    }
 
     nearLatest.current = true;
+    setShowJumpToLatest(false);
     setError("");
     setStatus("thinking");
     setDraft("");
     setLastQuestion(message);
-    const userMessage: Message = { id: crypto.randomUUID(), role: "user", text: message };
-    setMessages((current) => [...current, userMessage]);
+    if (!isRetry) setMessages((current) => [...current, { id: crypto.randomUUID(), role: "user", text: message }]);
     controller.current = new AbortController();
 
     try {
@@ -148,43 +157,59 @@ export function GokuBot() {
         signal: controller.current.signal,
         body: JSON.stringify({ message, context: messages.slice(-4).map((item) => ({ role: item.role, text: item.text })) }),
       });
-      if (response.status === 429) { setStatus("rate"); return; }
+      if (response.status === 429) {
+        setStatus("rate");
+        return;
+      }
       if (!response.ok) throw new Error("assistant_unavailable");
       const payload: { answer: string; sources: Source[]; suggestions: string[] } = await response.json();
       if (!payload.answer || typeof payload.answer !== "string") throw new Error("invalid_response");
       setMessages((current) => [...current, { id: crypto.randomUUID(), role: "assistant", text: payload.answer, sources: payload.sources, suggestions: payload.suggestions }]);
       setStatus("ready");
     } catch (requestError) {
-      if ((requestError as Error).name === "AbortError") { setStatus("ready"); return; }
+      if ((requestError as Error).name === "AbortError") {
+        setAnnouncement("GokuBot’s response was stopped.");
+        setStatus("ready");
+        return;
+      }
+      if (!isRetry) setDraft(message);
       setStatus("error");
     } finally {
       controller.current = null;
     }
   };
 
-  const clear = () => {
+  const resetConversation = (message: string) => {
     controller.current?.abort();
     window.sessionStorage.removeItem("gokubot-history");
     window.sessionStorage.removeItem("gokubot-session");
     sessionId.current = crypto.randomUUID();
     window.sessionStorage.setItem("gokubot-session", sessionId.current);
     nearLatest.current = true;
+    setShowJumpToLatest(false);
     setMessages([welcome]);
     setDraft("");
     setError("");
     setLastQuestion("");
     setStatus("ready");
+    setAnnouncement(message);
+    window.setTimeout(() => composerInput.current?.focus(), 0);
   };
 
-  const submit = (event: FormEvent) => { event.preventDefault(); void ask(); };
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!isThinking) void ask();
+  };
   const keyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void ask(); }
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      if (!isThinking) void ask();
+    }
   };
   const copy = async (id: string, text: string) => {
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-      } else {
+      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+      else {
         const fallback = document.createElement("textarea");
         fallback.value = text;
         fallback.setAttribute("readonly", "");
@@ -196,6 +221,7 @@ export function GokuBot() {
         if (!copied) throw new Error("copy_unavailable");
       }
       setCopiedId(id);
+      setAnnouncement("Response copied to clipboard.");
       if (copyResetTimer.current) window.clearTimeout(copyResetTimer.current);
       copyResetTimer.current = window.setTimeout(() => setCopiedId((current) => current === id ? null : current), 1800);
     } catch {
@@ -203,27 +229,69 @@ export function GokuBot() {
     }
   };
 
-  return <section ref={screen} className="screen gokubot-screen">
-    <div className="poster-grid" aria-hidden="true" />
-    <div className="circuit-field" aria-hidden="true" />
-    <div className="gokubot-mobile-head"><Bot /><span>GOKUBOT</span><small>{availabilityInfo.label} · AI portfolio assistant</small><details><summary className="focus-ring">Controls</summary><button onClick={clear}>New conversation</button><button onClick={clear}>Clear conversation</button><p>Messages stay only in this browser session. They are not stored by the backend or used for training.</p></details></div>
-    <aside className="gokubot-rail">
-      <div><p className="eyebrow">{"// Portfolio intelligence"}</p><h1>GOKUBOT</h1><p className="gokubot-role">Kapil Jangid’s Portfolio AI Assistant</p><p className={`gokubot-status ${availability}`} role="status" aria-live="polite"><i aria-hidden="true" /> <span>{availabilityInfo.label}</span></p><p className="gokubot-status-description">{availabilityInfo.description}</p></div>
-      <div className="gokubot-rail-actions"><button className="focus-ring" onClick={clear}><Plus /> New conversation</button><button className="focus-ring" onClick={clear}><Eraser /> Clear conversation</button><Link className="focus-ring" href="/"><X /> Return to portfolio</Link></div>
-      <div className="gokubot-privacy"><ShieldCheck /><p>Messages stay only in this browser session. They are not stored by the backend or used for training.</p></div>
-    </aside>
-    <main className={`gokubot-chat${hasConversation ? " has-conversation" : " initial"}`}>
-      <header><div><p className="eyebrow">{"// GOKUBOT"}</p><h2>Your AI guide to Kapil’s work, skills and journey.</h2></div><span className={`gokubot-stage-status ${availability}`} role="status" aria-label={`Assistant status: ${availabilityInfo.label}`}><i aria-hidden="true" /><span className="sr-only">Assistant status: {availabilityInfo.label}</span></span></header>
-      <div className="gokubot-log" ref={log} onScroll={updateScrollPosition} role="log" aria-live="polite" aria-label="GokuBot conversation">
-        {messages.map((message) => <motion.article key={message.id} className={`gokubot-message ${message.role}`} initial={reduced ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .24 }}><p className="gokubot-identity">{message.role === "assistant" ? "GOKUBOT / AI ASSISTANT" : "YOU"}</p><div className="gokubot-text">{message.text.split("\n").map((paragraph, index) => <p key={`${message.id}-${index}`}>{paragraph}</p>)}</div>{message.role === "assistant" && <div className="gokubot-actions"><button className="copy-answer focus-ring" onClick={() => void copy(message.id, message.text)} aria-label="Copy response"><Copy /><span>{copiedId === message.id ? "Copied" : "Copy"}</span></button><span className="sr-only" aria-live="polite">{copiedId === message.id ? "Response copied to clipboard." : ""}</span></div>}{message.sources && <div className="gokubot-sources">{message.sources.map((source) => source.external ? <a key={source.href} href={source.href} target="_blank" rel="noopener noreferrer" className="focus-ring">{source.label}<ExternalLink /></a> : <Link key={source.href} href={source.href} className="focus-ring">{source.label}</Link>)}</div>}{message.suggestions && <div className="gokubot-followups">{message.suggestions.map((suggestion) => <button key={suggestion} onClick={() => void ask(suggestion)} className="focus-ring" disabled={isThinking || availability === "offline"}>{suggestion}</button>)}</div>}</motion.article>)}
-        {status === "thinking" && <div className="gokubot-thinking"><LoaderCircle /> GOKUBOT IS ANALYSING PORTFOLIO DATA</div>}
-        {status === "rate" && <p className="gokubot-notice" role="alert">GokuBot has received several requests. Please wait a moment before trying again.</p>}
-        {status === "error" && <p className="gokubot-notice" role="alert">GokuBot couldn’t connect right now. Please retry or explore the portfolio directly. {lastQuestion && <button className="focus-ring" onClick={() => void ask(lastQuestion)}>Retry</button>}</p>}
-        {availability === "offline" && <p className="gokubot-notice" role="alert">GokuBot is temporarily unavailable. You can still explore <Link href="/projects">Projects</Link>, <Link href="/journey">Journey</Link>, and <Link href="/contact">Contact</Link>.</p>}
-        <div ref={logEnd} />
+  return (
+    <section className="gokubot-page" aria-labelledby="gokubot-title">
+      <div className="gokubot-stage">
+        <header className="assistant-introduction">
+          <p>GokuBot</p>
+          <h1 id="gokubot-title">Explore Kapil’s work through conversation.</h1>
+          <span>Ask about projects, skills, studies, community work or ways to collaborate.</span>
+        </header>
+
+        <section className="conversation-workspace" aria-label="GokuBot conversation workspace">
+          <header className="workspace-toolbar">
+            <div className="workspace-identity">
+              <span aria-hidden="true"><Bot /></span>
+              <b>GokuBot</b>
+              <p className={`workspace-status ${availability}`} role="status" aria-live="polite">
+                <i aria-hidden="true" /><span>{availabilityInfo.label}</span>
+                {availability === "limited" && <em>· {availabilityInfo.description}</em>}
+              </p>
+            </div>
+            <div className="workspace-controls">
+              <button type="button" className="workspace-control focus-ring" onClick={() => resetConversation("New conversation started.")}>
+                <Plus aria-hidden="true" /><span>New conversation</span>
+              </button>
+              <button type="button" className="workspace-control focus-ring" onClick={() => resetConversation("Conversation cleared.")}>
+                <Eraser aria-hidden="true" /><span>Clear conversation</span>
+              </button>
+            </div>
+          </header>
+
+          <div className="message-region">
+            <div className="assistant-message-viewport" ref={log} onScroll={updateScrollPosition} role="log" aria-live="polite" aria-label="GokuBot conversation">
+              {messages.map((message) => (
+                <motion.article key={message.id} className={`conversation-row ${message.role}`} initial={reduced ? false : { opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
+                  <div className="conversation-role">{message.role === "assistant" && <Bot aria-hidden="true" />}<span>{message.role === "assistant" ? "GokuBot" : "You"}</span></div>
+                  <div className="conversation-text">{message.text.split("\n").map((paragraph, index) => <p key={`${message.id}-${index}`}>{paragraph}</p>)}</div>
+                  {message.role === "assistant" && <div className="conversation-actions"><button type="button" className="response-action focus-ring" onClick={() => void copy(message.id, message.text)} aria-label="Copy response"><Copy aria-hidden="true" /><span>{copiedId === message.id ? "Copied" : "Copy"}</span></button></div>}
+                  {message.sources && message.sources.length > 0 && <div className="conversation-sources" aria-label="Related portfolio sources">{message.sources.map((source) => source.external ? <a key={source.href} href={source.href} target="_blank" rel="noopener noreferrer" className="focus-ring">{source.label}<ExternalLink aria-hidden="true" /></a> : <Link key={source.href} href={source.href} className="focus-ring">{source.label}</Link>)}</div>}
+                  {message.suggestions && message.suggestions.length > 0 && <div className="conversation-followups" aria-label="Suggested follow-up questions">{message.suggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => void ask(suggestion)} className="focus-ring" disabled={isThinking || availability === "offline" || availability === "checking"}>{suggestion}</button>)}</div>}
+                </motion.article>
+              ))}
+              {status === "thinking" && <div className="assistant-thinking" role="status"><LoaderCircle aria-hidden="true" /> GokuBot is preparing a verified response.</div>}
+              {status === "rate" && <p className="assistant-notice" role="alert">GokuBot has received several requests. Please wait a moment before trying again.</p>}
+              {status === "error" && <div className="assistant-notice" role="alert"><p>GokuBot couldn’t connect right now. Please retry or explore the portfolio directly.</p>{lastQuestion && <button type="button" className="response-action focus-ring" onClick={() => void ask(lastQuestion, true)}>Try again</button>}</div>}
+              {availability === "offline" && <p className="assistant-notice" role="alert">GokuBot is temporarily unavailable. You can still explore <Link href="/projects">Projects</Link>, <Link href="/journey">Journey</Link>, and <Link href="/contact">Contact</Link>.</p>}
+              {showSuggestions && <section className="assistant-suggestions" aria-labelledby="assistant-suggestions-title"><h2 id="assistant-suggestions-title">Start with a question</h2><div>{assistantSuggestedQuestions.map((question) => <button key={question} type="button" onClick={() => void ask(question)} className="focus-ring" disabled={isThinking || availability === "checking" || availability === "offline"}><span>{question}</span><span aria-hidden="true">→</span></button>)}</div></section>}
+              <div ref={logEnd} />
+            </div>
+            {showJumpToLatest && <button type="button" className="assistant-jump-latest focus-ring" onClick={jumpToLatest}>Jump to latest</button>}
+          </div>
+
+          <form className="assistant-composer" onSubmit={submit}>
+            <label htmlFor="gokubot-input">Ask GokuBot about Kapil’s portfolio</label>
+            <div className="composer-surface">
+              <textarea ref={composerInput} id="gokubot-input" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={keyDown} onFocus={(event) => event.currentTarget.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" })} maxLength={1200} disabled={availability === "offline" || isThinking} placeholder={availability === "offline" ? "GokuBot is temporarily unavailable" : "Ask GokuBot about Kapil…"} aria-describedby={error ? "gokubot-guidance gokubot-error" : "gokubot-guidance"} />
+              {isThinking ? <button type="button" className="composer-submit focus-ring" onClick={() => controller.current?.abort()}><Square aria-hidden="true" /><span>Stop</span></button> : <button type="submit" className="composer-submit focus-ring" disabled={availability === "offline" || availability === "checking"}><Send aria-hidden="true" /><span>Send</span></button>}
+            </div>
+            {error && <p id="gokubot-error" className="composer-error" role="alert">{error}</p>}
+            <div className="composer-guidance" id="gokubot-guidance"><span>Enter to send · Shift + Enter for a new line</span><span>{draft.length}/1200</span></div>
+            <p className="assistant-privacy"><ShieldCheck aria-hidden="true" /> Messages remain in this browser session and are not used for training.</p>
+          </form>
+        </section>
+        <p className="sr-only" aria-live="polite">{announcement}</p>
       </div>
-      {!hasConversation && <div className="gokubot-welcome-prompts"><p>Explore verified portfolio topics</p>{assistantSuggestedQuestions.map((question) => <button key={question} onClick={() => void ask(question)} className="focus-ring" disabled={isThinking || availability === "checking" || availability === "offline"}>{question}</button>)}</div>}
-      <form className="gokubot-composer" onSubmit={submit}><label htmlFor="gokubot-input">Ask GokuBot about Kapil&apos;s portfolio</label><textarea id="gokubot-input" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={keyDown} onFocus={(event) => event.currentTarget.scrollIntoView({ block: "center" })} maxLength={1200} disabled={availability === "offline" || isThinking} placeholder={availability === "offline" ? "GokuBot is temporarily unavailable" : "Ask about projects, skills, education or collaboration…"} aria-describedby={error ? "gokubot-guidance gokubot-error" : "gokubot-guidance"} />{error && <p id="gokubot-error" role="alert">{error}</p>}<div><span id="gokubot-guidance">{draft.length}/1200 · Enter to send · Shift + Enter for a new line</span>{isThinking ? <button type="button" className="focus-ring" onClick={() => controller.current?.abort()}><Square /> Stop</button> : <button type="submit" className="focus-ring" disabled={availability === "offline" || availability === "checking"}><Send /> Send</button>}</div></form>
-    </main>
-  </section>;
+    </section>
+  );
 }

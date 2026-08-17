@@ -2,13 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
 import { Download, Github, Linkedin, Mail, Home, UserRound, FolderKanban, Route, Sparkles, Send, Award, BadgeCheck, BookOpen, Bot, Code2, Globe2 } from "lucide-react";
 import { siteConfig } from "@/data/portfolio";
+import { portfolioRoutes } from "@/data/routeNavigation";
 
-const items = [
-  ["Home", "/", Home], ["About", "/about", UserRound], ["Projects", "/projects", FolderKanban], ["Journey", "/journey", Route], ["Services", "/services", Sparkles], ["Contact", "/contact", Send],
-  ["Certifications", "/certifications", BadgeCheck], ["Achievements", "/achievements", Award], ["Blogs", "/blogs", BookOpen], ["Open Source", "/open-source", Code2], ["Social", "/social", Globe2], ["GokuBot", "/assistant", Bot], ["Extras", "/extras", Sparkles],
-] as const;
+const navigationIcons: Record<string, LucideIcon> = {
+  home: Home,
+  about: UserRound,
+  projects: FolderKanban,
+  journey: Route,
+  services: Sparkles,
+  contact: Send,
+  certifications: BadgeCheck,
+  achievements: Award,
+  blogs: BookOpen,
+  "open-source": Code2,
+  social: Globe2,
+  gokubot: Bot,
+  extras: Sparkles,
+};
 
 export function Navbar() {
   const pathname = usePathname();
@@ -23,10 +36,16 @@ export function Navbar() {
       </div>
     </header>
     <nav className="orbit-nav" aria-label="Portfolio navigation">
-      {items.map(([label, href, Icon]) => <Link key={href} href={href} className={`orbit-item focus-ring ${pathname === href ? "active" : ""}`} aria-current={pathname === href ? "page" : undefined}><Icon /><span>{label}</span></Link>)}
+      {portfolioRoutes.map((item) => {
+        const Icon = navigationIcons[item.id];
+        return <Link key={item.href} href={item.href} className={`orbit-item focus-ring ${pathname === item.href ? "active" : ""}`} aria-current={pathname === item.href ? "page" : undefined}><Icon /><span>{item.label}</span></Link>;
+      })}
     </nav>
     <nav className="bottom-nav" aria-label="Portfolio navigation">
-      {items.map(([label, href, Icon]) => <Link key={href} href={href} className={`focus-ring ${pathname === href ? "active" : ""}`} aria-current={pathname === href ? "page" : undefined}><Icon /><span>{label}</span></Link>)}
+      {portfolioRoutes.map((item) => {
+        const Icon = navigationIcons[item.id];
+        return <Link key={item.href} href={item.href} className={`focus-ring ${pathname === item.href ? "active" : ""}`} aria-current={pathname === item.href ? "page" : undefined}><Icon /><span>{item.label}</span></Link>;
+      })}
     </nav>
   </>;
 }
