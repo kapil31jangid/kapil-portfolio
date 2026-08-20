@@ -1,0 +1,202 @@
+[
+  {
+    "index": 0,
+    "name": "body ",
+    "file": "head-00-body.png",
+    "zMin": 0.00519,
+    "zMax": 6.7924,
+    "polygons": 23395
+  },
+  {
+    "index": 1,
+    "name": "body .001",
+    "file": "head-01-body_-001.png",
+    "zMin": 4.8744,
+    "zMax": 6.99581,
+    "polygons": 9044
+  },
+  {
+    "index": 2,
+    "name": "body .008",
+    "file": "head-02-body_-008.png",
+    "zMin": 4.44471,
+    "zMax": 6.36485,
+    "polygons": 6964
+  },
+  {
+    "index": 3,
+    "name": "body .011",
+    "file": "head-03-body_-011.png",
+    "zMin": 6.49142,
+    "zMax": 6.6602,
+    "polygons": 154
+  },
+  {
+    "index": 4,
+    "name": "body .012",
+    "file": "head-04-body_-012.png",
+    "zMin": 6.36556,
+    "zMax": 6.71163,
+    "polygons": 1092
+  },
+  {
+    "index": 5,
+    "name": "body .013",
+    "file": "head-05-body_-013.png",
+    "zMin": 6.31639,
+    "zMax": 6.81391,
+    "polygons": 343
+  },
+  {
+    "index": 6,
+    "name": "body .014",
+    "file": "head-06-body_-014.png",
+    "zMin": 6.46379,
+    "zMax": 6.88283,
+    "polygons": 732
+  },
+  {
+    "index": 7,
+    "name": "body .015",
+    "file": "head-07-body_-015.png",
+    "zMin": 6.46379,
+    "zMax": 6.88283,
+    "polygons": 789
+  },
+  {
+    "index": 8,
+    "name": "body .016",
+    "file": "head-08-body_-016.png",
+    "zMin": 6.31639,
+    "zMax": 6.75378,
+    "polygons": 216
+  },
+  {
+    "index": 9,
+    "name": "body .017",
+    "file": "head-09-body_-017.png",
+    "zMin": 6.3824,
+    "zMax": 6.58198,
+    "polygons": 385
+  },
+  {
+    "index": 10,
+    "name": "body .018",
+    "file": "head-10-body_-018.png",
+    "zMin": 5.72498,
+    "zMax": 6.69483,
+    "polygons": 987
+  },
+  {
+    "index": 11,
+    "name": "body .034",
+    "file": "head-11-body_-034.png",
+    "zMin": 6.3824,
+    "zMax": 6.58198,
+    "polygons": 364
+  },
+  {
+    "index": 12,
+    "name": "body .035",
+    "file": "head-12-body_-035.png",
+    "zMin": 6.15193,
+    "zMax": 6.50606,
+    "polygons": 311
+  },
+  {
+    "index": 13,
+    "name": "body .036",
+    "file": "head-13-body_-036.png",
+    "zMin": 6.60979,
+    "zMax": 7.28079,
+    "polygons": 1076
+  },
+  {
+    "index": 14,
+    "name": "body .037",
+    "file": "head-14-body_-037.png",
+    "zMin": 6.7319,
+    "zMax": 7.2792,
+    "polygons": 609
+  },
+  {
+    "index": 15,
+    "name": "body .038",
+    "file": "head-15-body_-038.png",
+    "zMin": 6.60069,
+    "zMax": 7.05786,
+    "polygons": 520
+  },
+  {
+    "index": 16,
+    "name": "body .039",
+    "file": "head-16-body_-039.png",
+    "zMin": 6.48264,
+    "zMax": 6.92278,
+    "polygons": 514
+  },
+  {
+    "index": 17,
+    "name": "Object_3.002",
+    "file": "head-17-Object_3-002.png",
+    "zMin": 5.99326,
+    "zMax": 6.72565,
+    "polygons": 1733
+  },
+  {
+    "index": 18,
+    "name": "Object_3.005",
+    "file": "head-18-Object_3-005.png",
+    "zMin": 4.8324,
+    "zMax": 6.41451,
+    "polygons": 7476
+  },
+  {
+    "index": 19,
+    "name": "Object_3.006",
+    "file": "head-19-Object_3-006.png",
+    "zMin": 6.91699,
+    "zMax": 7.68775,
+    "polygons": 2396
+  },
+  {
+    "index": 20,
+    "name": "Object_3.007",
+    "file": "head-20-Object_3-007.png",
+    "zMin": 3.66419,
+    "zMax": 6.41451,
+    "polygons": 7654
+  },
+  {
+    "index": 21,
+    "name": "Object_3.008",
+    "file": "head-21-Object_3-008.png",
+    "zMin": 6.76204,
+    "zMax": 7.78431,
+    "polygons": 2309
+  },
+  {
+    "index": 22,
+    "name": "Object_3.010",
+    "file": "head-22-Object_3-010.png",
+    "zMin": 5.62166,
+    "zMax": 6.46543,
+    "polygons": 2875
+  },
+  {
+    "index": 23,
+    "name": "Object_3.012",
+    "file": "head-23-Object_3-012.png",
+    "zMin": 6.76204,
+    "zMax": 7.78431,
+    "polygons": 2260
+  },
+  {
+    "index": 24,
+    "name": "RT.hand",
+    "file": "head-24-RT-hand.png",
+    "zMin": 5.99326,
+    "zMax": 6.72565,
+    "polygons": 1732
+  }
+]

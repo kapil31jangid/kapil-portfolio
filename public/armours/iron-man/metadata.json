@@ -1,0 +1,86 @@
+{
+  "width": 2048,
+  "height": 2560,
+  "sourceModel": "source-assets/iron-man/source/iron.blend",
+  "sourceModelPublic": false,
+  "faceplateObject": "Object_3.006",
+  "reactorObject": "Object_3.010",
+  "camera": {
+    "location": [
+      0.85,
+      -12.8,
+      5.35
+    ],
+    "rotationEuler": [
+      1.54732,
+      0.0,
+      0.06657
+    ],
+    "lens": 82.0
+  },
+  "hinge": {
+    "xPercent": 49.3583,
+    "yPercent": 2.1512
+  },
+  "helmetBounds": {
+    "x": 864.437,
+    "y": 23.853,
+    "width": 292.843,
+    "height": 390.213,
+    "xPercent": 42.2088,
+    "yPercent": 0.9318,
+    "widthPercent": 14.299,
+    "heightPercent": 15.2427
+  },
+  "faceBounds": {
+    "x": 899.578,
+    "y": 55.07,
+    "width": 222.561,
+    "height": 335.583
+  },
+  "openTransform": {
+    "rotateX": -68,
+    "translateYPercent": -4.5,
+    "scale": 0.965
+  },
+  "attribution": {
+    "status": "pending",
+    "author": null,
+    "licence": null,
+    "sourceUrl": null
+  },
+  "portrait": {
+    "source": "/profile/kapil-portrait.jpg",
+    "detection": {
+      "face": [
+        169,
+        120,
+        306,
+        306
+      ],
+      "eyes": [
+        [
+          263.5,
+          246.5
+        ],
+        [
+          381.5,
+          240.5
+        ]
+      ],
+      "sourceSize": [
+        640,
+        641
+      ]
+    },
+    "modifications": [
+      "background removal",
+      "rotation correction",
+      "proportional scaling",
+      "helmet-mask clipping",
+      "exposure and colour-temperature integration"
+    ],
+    "facialGeneration": false
+  },
+  "sourceArchiveSha256": "24173e6c795d5f1b74ca9358244331c74614bea0a1b9c212c417dc073688fb8d"
+}

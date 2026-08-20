@@ -6,14 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "armour:inspect": "source-assets/tools/blender-4.5.12-linux-x64/blender -b source-assets/iron-man/source/iron.blend --python scripts/armour/inspect_model.py",
+    "armour:build": "bash scripts/armour/build_armour.sh",
+    "armour:validate": "node scripts/armour/validate_layers.mjs"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@types/three": "^0.185.4",
     "framer-motion": "^12.42.2",
     "lucide-react": "^0.468.0",
     "next": "^16.3.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

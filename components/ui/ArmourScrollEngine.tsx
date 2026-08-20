@@ -2,10 +2,10 @@
 
 import { useRef, ReactNode } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { SuitTheme } from "@/data/suitThemes";
+import { SuitConfig } from "@/data/suitThemes";
 
 interface ArmourScrollEngineProps {
-  suitTheme: SuitTheme;
+  suitTheme: SuitConfig;
   children: ReactNode;
   id: string;
 }
@@ -48,17 +48,17 @@ export function ArmourScrollEngine({ suitTheme, children, id }: ArmourScrollEngi
           <div className="flex items-center gap-3">
             <span
               className="px-3 py-1 font-mono text-xs font-bold rounded uppercase tracking-wider text-slate-950 shadow"
-              style={{ backgroundColor: suitTheme.accentEnergy }}
+              style={{ backgroundColor: suitTheme.energyColor }}
             >
-              {suitTheme.generationLabel}
+              {suitTheme.label}
             </span>
             <span className="font-display font-bold text-lg text-white uppercase tracking-wider">
-              {suitTheme.systemTitle}
+              {suitTheme.name}
             </span>
           </div>
 
           <span className="hidden sm:inline font-mono text-xs text-slate-400 uppercase tracking-widest">
-            {suitTheme.technicalTagline}
+            {suitTheme.tagline}
           </span>
         </div>
 

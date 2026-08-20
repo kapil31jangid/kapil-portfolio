@@ -20,6 +20,9 @@
 # production
 /build
 
+# private licensed source assets and local rendering tools
+/source-assets/
+
 # misc
 .DS_Store
 *.pem

@@ -1,40 +1,126 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════
-   KJ ARMOUR EVOLUTION PORTFOLIO — COLOR TOKENS
+   GLOBAL INTERACTIVE ARMOURY SYSTEM — THEME DEFINITIONS
    ═══════════════════════════════════════════════════════ */
-:root {
-  --void-black: #020305;
-  --workshop-black: #05070A;
-  --gunmetal: #11151B;
-  --gunmetal-light: #1E2530;
-  
-  --armour-red-deep: #8F1015;
-  --armour-red-bright: #D11A22;
-  --armour-red-glow: rgba(209, 26, 34, 0.4);
 
-  --metallic-gold: #D6A43B;
-  --aged-brass: #9A6A20;
-  --gold-glow: rgba(214, 164, 59, 0.35);
+:root,
+[data-armour-theme="mark-3"] {
+  --theme-primary: #D11A22;
+  --theme-secondary: #D6A43B;
+  --theme-energy: #7FEFFF;
+  --theme-glow: rgba(209, 26, 34, 0.45);
+  --theme-bg: #05070A;
+  --theme-surface: #11151B;
+  --theme-border: rgba(214, 164, 59, 0.4);
+  --theme-text: #F4FDFF;
+}
 
-  --titanium-silver: #C7CDD5;
-  --arc-white: #F4FDFF;
-  --arc-cyan: #7FEFFF;
-  --arc-cyan-glow: rgba(127, 239, 255, 0.5);
+[data-armour-theme="mark-1"] {
+  --theme-primary: #3A424D;
+  --theme-secondary: #9A6A20;
+  --theme-energy: #F59E0B;
+  --theme-glow: rgba(245, 158, 11, 0.45);
+  --theme-bg: #090B0E;
+  --theme-surface: #161A22;
+  --theme-border: rgba(154, 106, 32, 0.5);
+  --theme-text: #E2E8F0;
+}
 
-  --bg-primary: var(--void-black);
-  --text-primary: var(--arc-white);
+[data-armour-theme="mark-2"] {
+  --theme-primary: #C7CDD5;
+  --theme-secondary: #475569;
+  --theme-energy: #7FEFFF;
+  --theme-glow: rgba(127, 239, 255, 0.5);
+  --theme-bg: #05070B;
+  --theme-surface: #0F172A;
+  --theme-border: rgba(199, 205, 213, 0.4);
+  --theme-text: #F8FAFC;
+}
+
+[data-armour-theme="mark-5"] {
+  --theme-primary: #DC2626;
+  --theme-secondary: #CBD5E1;
+  --theme-energy: #7FEFFF;
+  --theme-glow: rgba(220, 38, 38, 0.45);
+  --theme-bg: #07080D;
+  --theme-surface: #141622;
+  --theme-border: rgba(220, 38, 38, 0.5);
+  --theme-text: #F1F5F9;
+}
+
+[data-armour-theme="mark-7"] {
+  --theme-primary: #B91C1C;
+  --theme-secondary: #EAB308;
+  --theme-energy: #38BDF8;
+  --theme-glow: rgba(185, 28, 28, 0.5);
+  --theme-bg: #06070B;
+  --theme-surface: #111420;
+  --theme-border: rgba(234, 179, 8, 0.45);
+  --theme-text: #F4FDFF;
+}
+
+[data-armour-theme="mark-42"] {
+  --theme-primary: #EAB308;
+  --theme-secondary: #991B1B;
+  --theme-energy: #38BDF8;
+  --theme-glow: rgba(234, 179, 8, 0.5);
+  --theme-bg: #080706;
+  --theme-surface: #1C120C;
+  --theme-border: rgba(234, 179, 8, 0.5);
+  --theme-text: #FEF08A;
+}
+
+[data-armour-theme="hulkbuster"] {
+  --theme-primary: #7F1D1D;
+  --theme-secondary: #CA8A04;
+  --theme-energy: #F0F9FF;
+  --theme-glow: rgba(240, 249, 255, 0.55);
+  --theme-bg: #0A0506;
+  --theme-surface: #1C0B0E;
+  --theme-border: rgba(202, 138, 4, 0.55);
+  --theme-text: #FFFFFF;
+}
+
+[data-armour-theme="mark-46"] {
+  --theme-primary: #991B1B;
+  --theme-secondary: #D97706;
+  --theme-energy: #38BDF8;
+  --theme-glow: rgba(153, 27, 27, 0.5);
+  --theme-bg: #060507;
+  --theme-surface: #170E14;
+  --theme-border: rgba(217, 119, 6, 0.45);
+  --theme-text: #F8FAFC;
+}
+
+[data-armour-theme="mark-50"] {
+  --theme-primary: #DC2626;
+  --theme-secondary: #F59E0B;
+  --theme-energy: #38BDF8;
+  --theme-glow: rgba(56, 189, 248, 0.65);
+  --theme-bg: #040508;
+  --theme-surface: #0F1322;
+  --theme-border: rgba(56, 189, 248, 0.5);
+  --theme-text: #E0F2FE;
+}
+
+[data-armour-theme="mark-85"] {
+  --theme-primary: #EF4444;
+  --theme-secondary: #F59E0B;
+  --theme-energy: #F0F9FF;
+  --theme-glow: rgba(240, 249, 255, 0.85);
+  --theme-bg: #030407;
+  --theme-surface: #121526;
+  --theme-border: rgba(245, 158, 11, 0.6);
+  --theme-text: #FFFFFF;
 }
 
 @theme inline {
-  --color-void-black: var(--void-black);
-  --color-workshop-black: var(--workshop-black);
-  --color-gunmetal: var(--gunmetal);
-  --color-armour-red: var(--armour-red-bright);
-  --color-metallic-gold: var(--metallic-gold);
-  --color-titanium-silver: var(--titanium-silver);
-  --color-arc-white: var(--arc-white);
-  --color-arc-cyan: var(--arc-cyan);
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-surface: var(--theme-surface);
+  --color-theme-primary: var(--theme-primary);
+  --color-theme-secondary: var(--theme-secondary);
+  --color-theme-energy: var(--theme-energy);
   --font-sans: var(--font-inter);
   --font-display: var(--font-rajdhani);
   --font-mono: var(--font-jetbrains);
@@ -60,19 +146,20 @@ html {
 }
 
 body {
-  background: var(--void-black);
-  color: var(--arc-white);
+  background: var(--theme-bg);
+  color: var(--theme-text);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 ::selection {
-  background: rgba(209, 26, 34, 0.45);
+  background: var(--theme-primary);
   color: #ffffff;
 }
 
 .focus-ring:focus-visible {
-  outline: 2px solid var(--armour-red-bright);
+  outline: 2px solid var(--theme-primary);
   outline-offset: 3px;
 }
 
@@ -83,55 +170,212 @@ body {
   font: 900 clamp(3.8rem, 9vw, 8.5rem)/0.82 var(--font-rajdhani);
   text-transform: uppercase;
   letter-spacing: -0.04em;
-  background: linear-gradient(180deg, #FFFFFF 0%, #D6A43B 38%, #C7CDD5 70%, #475569 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--theme-secondary) 38%, #94A3B8 70%, #334155 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 30px rgba(209, 26, 34, 0.45));
-}
-
-.armour-section-heading {
-  font: 800 clamp(2.4rem, 5.5vw, 5.5rem)/0.88 var(--font-rajdhani);
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 30px var(--theme-glow));
 }
 
 /* ═══════════════════════════════════════════════════════
    SURFACES & GEOMETRY
    ═══════════════════════════════════════════════════════ */
 .armour-plate-surface {
-  background: linear-gradient(140deg, rgba(30, 37, 48, 0.95) 0%, rgba(17, 21, 27, 0.98) 60%, rgba(5, 7, 10, 0.99) 100%);
-  border: 1px solid rgba(199, 205, 213, 0.18);
+  background: linear-gradient(140deg, var(--theme-surface) 0%, var(--theme-bg) 100%);
+  border: 1px solid var(--theme-border);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 20px 40px rgba(0, 0, 0, 0.8);
-}
-
-.engraved-gold-border {
-  border: 1px solid rgba(214, 164, 59, 0.4);
-  position: relative;
-}
-
-.engraved-gold-border::before {
-  content: "";
-  position: absolute;
-  top: -1px; left: -1px; right: -1px;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--metallic-gold), transparent);
+  transition: all 0.4s ease;
 }
 
 .arc-core-glow {
-  box-shadow: 0 0 60px var(--arc-cyan-glow), inset 0 0 30px var(--arc-cyan-glow);
+  box-shadow: 0 0 60px var(--theme-energy), inset 0 0 30px var(--theme-energy);
 }
 
-/* Carbon & Hex Pattern Backgrounds */
 .carbon-grid-bg {
   background-image: 
-    linear-gradient(rgba(214, 164, 59, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(214, 164, 59, 0.08) 1px, transparent 1px);
+    linear-gradient(var(--theme-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--theme-border) 1px, transparent 1px);
   background-size: 80px 80px;
 }
 
 .animate-spin-slow {
   animation: spin 30s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LICENSED-SOURCE 2.5D ARMOUR HERO
+   All suit geometry is rendered offline from the private Blender model.
+   ═══════════════════════════════════════════════════════ */
+.iron-man-hero-stage {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 42rem);
+  min-height: 34rem;
+  display: grid;
+  place-items: end center;
+  pointer-events: none;
+}
+
+.iron-man-armour-stage {
+  position: relative;
+  z-index: 4;
+  width: min(100%, 38rem);
+  aspect-ratio: 4 / 5;
+  perspective: 1100px;
+  pointer-events: auto;
+  contain: layout paint;
+}
+
+.iron-man-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.iron-man-face-layer { z-index: 1; }
+.iron-man-body-layer { z-index: 2; }
+.iron-man-interior-layer { z-index: 3; }
+.iron-man-plate-shadow { z-index: 3; }
+.iron-man-faceplate-layer { z-index: 4; will-change: transform; }
+.iron-man-eyes-layer { z-index: 5; }
+.iron-man-reactor-layer { z-index: 6; filter: drop-shadow(0 0 0.65rem rgba(158, 240, 255, 0.42)); }
+.iron-man-highlights-layer { z-index: 7; mix-blend-mode: screen; opacity: 0.55; }
+
+.iron-man-plate-shadow {
+  background: radial-gradient(
+    ellipse 8% 4% at 49.5% 13%,
+    rgba(0, 0, 0, 0.82),
+    transparent 78%
+  );
+  filter: blur(0.4rem);
+}
+
+.iron-man-ground-glow {
+  position: absolute;
+  z-index: 0;
+  left: 15%;
+  right: 10%;
+  bottom: 1.5%;
+  height: 17%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(35, 142, 177, 0.22), rgba(100, 18, 20, 0.12) 42%, transparent 72%);
+  filter: blur(1.5rem);
+  pointer-events: none;
+}
+
+.iron-man-helmet-hotspot {
+  position: absolute;
+  z-index: 12;
+  left: 38%;
+  top: 0;
+  width: 24%;
+  height: 23%;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 45% 45% 34% 34%;
+  touch-action: manipulation;
+}
+
+.iron-man-helmet-hotspot:focus-visible {
+  outline: 2px solid var(--theme-energy);
+  outline-offset: -0.25rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.82), 0 0 1.25rem rgba(127, 239, 255, 0.42);
+}
+
+.iron-man-ambient,
+.iron-man-rim-line {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.iron-man-ambient-warm {
+  width: 72%;
+  height: 72%;
+  right: 0;
+  top: 7%;
+  border-radius: 48%;
+  background: radial-gradient(ellipse at 45% 35%, rgba(182, 44, 31, 0.28), rgba(111, 65, 16, 0.14) 44%, transparent 72%);
+  filter: blur(2.25rem);
+}
+
+.iron-man-ambient-cool {
+  width: 48%;
+  height: 78%;
+  left: 9%;
+  top: 10%;
+  background: linear-gradient(112deg, transparent 18%, rgba(76, 208, 232, 0.13) 48%, transparent 72%);
+  filter: blur(1rem);
+  transform: skewX(-10deg);
+}
+
+.iron-man-rim-line {
+  width: 1px;
+  height: 72%;
+  left: 29%;
+  top: 8%;
+  background: linear-gradient(to bottom, transparent, rgba(174, 233, 245, 0.45), transparent);
+  box-shadow: 0 0 1rem rgba(100, 220, 242, 0.28);
+  transform: rotate(12deg);
+}
+
+.iron-man-stage-label {
+  position: absolute;
+  z-index: 8;
+  right: 0.5rem;
+  bottom: 1.25rem;
+  display: grid;
+  justify-items: end;
+  gap: 0.25rem;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.65rem;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  color: rgba(226, 232, 240, 0.68);
+  pointer-events: none;
+}
+
+.iron-man-stage-label span:first-child {
+  color: var(--theme-energy);
+}
+
+@media (max-width: 1023px) {
+  .iron-man-hero-stage {
+    min-height: 30rem;
+    width: min(100%, 34rem);
+  }
+
+  .iron-man-armour-stage {
+    width: min(92vw, 33rem);
+  }
+}
+
+@media (max-width: 639px) {
+  .iron-man-hero-stage {
+    min-height: 27rem;
+    width: 100%;
+  }
+
+  .iron-man-armour-stage {
+    width: min(96vw, 29rem);
+  }
+
+  .iron-man-stage-label {
+    right: 0.25rem;
+    bottom: 0.5rem;
+    font-size: 0.58rem;
+  }
+
+  .iron-man-ambient-warm { opacity: 0.72; }
+  .iron-man-ambient-cool, .iron-man-rim-line { opacity: 0.58; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iron-man-faceplate-layer { will-change: auto; }
 }
 
 @keyframes spin {

@@ -1,0 +1,71 @@
+{
+  "expected": {
+    "width": 2048,
+    "height": 2560
+  },
+  "files": [
+    {
+      "file": "body-open.webp",
+      "bytes": 384992,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "faceplate.webp",
+      "bytes": 33094,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "helmet-interior.webp",
+      "bytes": 17290,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 248
+    },
+    {
+      "file": "helmet-mask.png",
+      "bytes": 29821,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "kapil-face-layer.webp",
+      "bytes": 39026,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "eyes.webp",
+      "bytes": 16946,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "reactor.webp",
+      "bytes": 63548,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 255
+    },
+    {
+      "file": "highlights.webp",
+      "bytes": 352136,
+      "width": 2048,
+      "height": 2560,
+      "alphaMax": 53
+    }
+  ],
+  "totalBytes": 936853,
+  "attribution": {
+    "status": "pending",
+    "author": null,
+    "licence": null,
+    "sourceUrl": null
+  }
+}
