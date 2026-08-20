@@ -1,6 +1,6 @@
 # Kapil Jangid — Portfolio
 
-A route-based personal portfolio for Kapil Jangid, an AI-driven full-stack developer. The interface uses a near-black cyberpunk poster system with chrome type, cyan and violet illumination, accessible navigation, and responsive desktop/mobile compositions.
+A route-based personal portfolio for Kapil Jangid, an AI-driven full-stack developer. The interface uses a restrained dark editorial system with a compact identity header, accessible left navigation drawer, and responsive natural-scrolling layouts.
 
 ## Stack
 
@@ -14,25 +14,25 @@ A route-based personal portfolio for Kapil Jangid, an AI-driven full-stack devel
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Home / portfolio introduction |
-| `/about` | Biography, education, and capabilities |
+| `/` | Welcome, About Me, Skills, and compact contact footer |
+| `/certifications` | Certificate archive and verified digital badges |
 | `/projects` | Project showcase |
-| `/journey` | Experience and learning journey |
-| `/services` | Services |
-| `/contact` | Contact options and form |
+| `/blogs` | Published technical writing |
+| `/achievements` | Verified milestones and recognition |
+| `/social` | Verified profile directory |
 | `/assistant` | GokuBot, the grounded portfolio assistant |
 | `/extras` | Learning, tools, gaming, setup, and website notes |
-| `/social` | Social directory |
-| `/certifications`, `/achievements`, `/blogs`, `/open-source` | Supporting portfolio routes |
+
+Legacy `/about`, `/journey`, `/services`, and `/contact` URLs redirect to their relevant Home section. `/open-source` redirects to Projects.
 
 ## Content and assets
 
 Portfolio facts are centralised in [`data/portfolio.ts`](data/portfolio.ts). Update this source before changing route components.
 
-- `projects`, `education`, `experience`, and `services` contain verified portfolio content.
-- `socialProfiles` drives the `/social` grid. GitHub, LinkedIn, and Email are verified. Other listed platforms are explicitly marked as demo links until Kapil’s exact profile URLs are supplied.
+- `projects`, `education`, `experience`, and skills data contain verified portfolio content.
+    - `socialProfiles` drives the `/social` grid. GitHub, LinkedIn, Instagram, Credly, Reddit, Kaggle, Medium, HackerRank, PlayStation, and Email use supplied profile links.
 - [`data/assistantKnowledge.ts`](data/assistantKnowledge.ts) derives GokuBot’s grounded records from centralised portfolio data.
-- The original portrait is stored in `public/profile/`.
+- The original portrait is stored in `public/profile/kapil-portrait.jpg`.
 - The downloadable résumé is `public/resume/kapil-jangid-resume.pdf`.
 
 ## GokuBot

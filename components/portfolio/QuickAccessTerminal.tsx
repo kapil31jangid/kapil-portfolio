@@ -3,32 +3,21 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Terminal } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { siteConfig } from "@/data/portfolio";
 import { portfolioRoutes } from "@/data/routeNavigation";
 
-type TerminalEntry = {
-  id: string;
-  command?: string;
-  kind: "welcome" | "info" | "notice" | "error";
-  lines?: readonly string[];
-};
+type BodyView = "quick" | "all" | "output";
+type CommandGroup = "Portfolio" | "Proof and Writing" | "Connect" | "Tools";
 
 type CommandDefinition = {
   id: string;
   command: string;
   label: string;
   description: string;
-  group: "Portfolio" | "Proof and Writing" | "Connect" | "Tools";
+  group: CommandGroup;
   aliases?: readonly string[];
   external?: boolean;
-};
-
-type CommandGroup = {
-  title: CommandDefinition["group"];
-  routeIds?: readonly string[];
-  externalIds?: readonly (keyof typeof externalCommands)[];
-  utilityIds?: readonly string[];
 };
 
 const externalCommands = {
@@ -37,72 +26,48 @@ const externalCommands = {
   resume: { label: "Résumé", href: siteConfig.resumePath, description: "Download Kapil’s résumé" },
 } as const;
 
-const initialEntries: TerminalEntry[] = [{
-  id: "welcome",
-  kind: "welcome",
-  lines: ["Welcome to Kapil’s portfolio.", "Choose a destination or type \"help\"."],
-}];
-
-const commandGroups: readonly CommandGroup[] = [
-  { title: "Portfolio", routeIds: ["home", "about", "projects", "journey", "services", "contact"] },
-  { title: "Proof and Writing", routeIds: ["certifications", "achievements", "blogs", "open-source"] },
-  { title: "Connect", routeIds: ["social"], externalIds: ["github", "linkedin", "resume"] },
-  { title: "Tools", routeIds: ["gokubot", "extras"], utilityIds: ["whoami", "clear", "help"] },
-] as const;
-
+const commandGroupOrder: readonly CommandGroup[] = ["Portfolio", "Proof and Writing", "Connect", "Tools"];
+const routeIdsByGroup: Record<CommandGroup, readonly string[]> = {
+  Portfolio: ["home", "about", "projects", "journey", "services", "contact"],
+  "Proof and Writing": ["certifications", "achievements", "blogs", "open-source"],
+  Connect: ["social"],
+  Tools: ["gokubot", "extras"],
+};
 const quickCommandIds = ["projects", "about", "journey", "gokubot", "contact", "resume"] as const;
-const paletteId = "portfolio-command-palette";
-const suggestionId = "portfolio-command-suggestions";
 
 export function QuickAccessTerminal() {
   const router = useRouter();
-  const input = useRef<HTMLInputElement>(null);
-  const output = useRef<HTMLDivElement>(null);
-  const paletteTrigger = useRef<HTMLButtonElement>(null);
-  const paletteButtons = useRef<Array<HTMLButtonElement | null>>([]);
-  const [value, setValue] = useState("");
-  const [entries, setEntries] = useState<TerminalEntry[]>(initialEntries);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const allCommandsTriggerRef = useRef<HTMLButtonElement>(null);
+  const firstDirectoryCommandRef = useRef<HTMLButtonElement>(null);
+  const [bodyView, setBodyView] = useState<BodyView>("quick");
+  const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [announcement, setAnnouncement] = useState("");
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [paletteIndex, setPaletteIndex] = useState(0);
-  const [paletteReturnTarget, setPaletteReturnTarget] = useState<"trigger" | "input">("trigger");
-  const focusFirstPaletteCommand = useRef(false);
-  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [status, setStatus] = useState("Choose a destination or type a command.");
+  const [output, setOutput] = useState("");
+  const focusDirectoryCommand = useRef(false);
 
-  const routeLookup = useMemo(() => {
-    const lookup = new Map<string, (typeof portfolioRoutes)[number]>();
-    for (const route of portfolioRoutes) {
-      lookup.set(route.command, route);
-      for (const alias of route.aliases ?? []) lookup.set(alias, route);
-    }
-    return lookup;
-  }, []);
-
-  const commandDefinitions = useMemo<CommandDefinition[]>(() => {
-    const routeById = new Map(portfolioRoutes.map((route) => [route.id, route]));
+  const commands = useMemo<CommandDefinition[]>(() => {
+    const byId = new Map(portfolioRoutes.map((route) => [route.id, route]));
     const definitions: CommandDefinition[] = [];
 
-    for (const group of commandGroups) {
-      for (const routeId of group.routeIds ?? []) {
-        const route = routeById.get(routeId);
-        if (route) definitions.push({ ...route, group: group.title });
+    for (const group of commandGroupOrder) {
+      for (const routeId of routeIdsByGroup[group]) {
+        const route = byId.get(routeId);
+        if (route) definitions.push({ ...route, group });
       }
-
-      for (const externalId of group.externalIds ?? []) {
-        const external = externalCommands[externalId];
-        definitions.push({ id: externalId, command: externalId, label: external.label, description: external.description, group: group.title, external: true });
+      if (group === "Connect") {
+        for (const [id, command] of Object.entries(externalCommands)) {
+          definitions.push({ id, command: id, label: command.label, description: command.description, group, external: true });
+        }
       }
-
-      for (const utilityId of group.utilityIds ?? []) {
-        const utility = utilityId === "whoami"
-          ? { label: "Whoami", description: "Show Kapil’s verified introduction" }
-          : utilityId === "clear"
-            ? { label: "Clear", description: "Clear terminal output" }
-            : { label: "Help", description: "Open the command directory" };
-        definitions.push({ id: utilityId, command: utilityId, ...utility, group: group.title });
+      if (group === "Tools") {
+        definitions.push(
+          { id: "whoami", command: "whoami", label: "Whoami", description: "Show Kapil’s verified introduction", group },
+          { id: "clear", command: "clear", label: "Clear", description: "Return to quick access", group },
+          { id: "help", command: "help", label: "Help", description: "Open the command directory", group },
+        );
       }
     }
     return definitions;
@@ -110,252 +75,190 @@ export function QuickAccessTerminal() {
 
   const commandLookup = useMemo(() => {
     const lookup = new Map<string, CommandDefinition>();
-    for (const command of commandDefinitions) {
+    for (const command of commands) {
       lookup.set(command.command, command);
       for (const alias of command.aliases ?? []) lookup.set(alias, command);
     }
     return lookup;
-  }, [commandDefinitions]);
+  }, [commands]);
 
-  const quickCommands = useMemo(
-    () => quickCommandIds.map((id) => commandDefinitions.find((command) => command.id === id)).filter((command): command is CommandDefinition => Boolean(command)),
-    [commandDefinitions],
-  );
+  const quickCommands = useMemo(() => quickCommandIds.flatMap((id) => {
+    const command = commands.find((item) => item.id === id);
+    return command ? [command] : [];
+  }), [commands]);
 
-  const normalizedQuery = value.trim().toLowerCase().replace(/^open\s+/, "");
-  const suggestions = useMemo(() => {
-    if (!normalizedQuery) return [];
-    return commandDefinitions
-      .map((command) => {
-        const terms = [command.command, command.label.toLowerCase(), ...(command.aliases ?? [])];
-        const exact = terms.some((term) => term === normalizedQuery);
-        const prefix = terms.some((term) => term.startsWith(normalizedQuery));
-        const partial = terms.some((term) => term.includes(normalizedQuery)) || command.description.toLowerCase().includes(normalizedQuery);
-        return { command, score: exact ? 0 : prefix ? 1 : partial ? 2 : 3 };
-      })
-      .filter((item) => item.score < 3)
-      .sort((a, b) => a.score - b.score || a.command.label.localeCompare(b.command.label))
-      .slice(0, 6)
-      .map((item) => item.command);
-  }, [commandDefinitions, normalizedQuery]);
-  const resolvedActiveSuggestion = activeSuggestion >= 0 && activeSuggestion < suggestions.length ? activeSuggestion : -1;
+  const completion = useMemo(() => {
+    const query = input.trim().toLowerCase().replace(/^open\s+/, "");
+    if (!query) return undefined;
+    return commands.find((command) => [command.command, command.label.toLowerCase(), ...(command.aliases ?? [])].some((term) => term.startsWith(query)));
+  }, [commands, input]);
 
-  const append = useCallback((entry: Omit<TerminalEntry, "id">) => {
-    setEntries((current) => [...current.slice(-5), { ...entry, id: crypto.randomUUID() }]);
+  const showQuick = useCallback((focusTrigger = false) => {
+    setBodyView("quick");
+    setOutput("");
+    setStatus("Choose a destination or type a command.");
+    if (focusTrigger) window.setTimeout(() => allCommandsTriggerRef.current?.focus(), 0);
   }, []);
 
-  const refocusInput = useCallback(() => {
-    window.setTimeout(() => input.current?.focus(), 0);
+  const showAll = useCallback((focusFirst = false) => {
+    focusDirectoryCommand.current = focusFirst;
+    setBodyView("all");
+    setStatus("Command directory opened.");
   }, []);
 
-  const openPalette = useCallback((returnTarget: "trigger" | "input", focusFirst = false) => {
-    setPaletteReturnTarget(returnTarget);
-    setPaletteIndex(0);
-    focusFirstPaletteCommand.current = focusFirst;
-    setSuggestionsOpen(false);
-    setPaletteOpen(true);
+  const showOutput = useCallback((message: string, nextStatus = message) => {
+    setOutput(message);
+    setBodyView("output");
+    setStatus(nextStatus);
   }, []);
 
-  const closePalette = useCallback(() => {
-    setPaletteOpen(false);
-    setAnnouncement("Command directory closed.");
-    window.setTimeout(() => {
-      if (paletteReturnTarget === "input") input.current?.focus();
-      else paletteTrigger.current?.focus();
-    }, 0);
-  }, [paletteReturnTarget]);
+  const executeCommand = useCallback((rawValue: string) => {
+    const rawCommand = rawValue.trim().toLowerCase();
+    if (!rawCommand) return;
 
-  const execute = useCallback((rawCommand: string) => {
-    const command = rawCommand.trim().toLowerCase();
-    if (!command) return;
-    setHistory((current) => [...current.slice(-29), command]);
+    setHistory((current) => [...current.slice(-29), rawCommand]);
     setHistoryIndex(-1);
-    setValue("");
-    setSuggestionsOpen(false);
-    setActiveSuggestion(-1);
+    setInput("");
 
-    if (command === "clear") {
-      setEntries([]);
-      setPaletteOpen(false);
-      setAnnouncement("Terminal output cleared.");
-      refocusInput();
+    if (rawCommand === "help") {
+      showAll(true);
       return;
     }
-    if (command === "help") {
-      append({ command, kind: "notice", lines: ["Command directory opened."] });
-      openPalette("input", true);
-      setAnnouncement("Command directory opened.");
+    if (rawCommand === "clear") {
+      showQuick();
+      window.setTimeout(() => inputRef.current?.focus(), 0);
       return;
     }
-    if (command === "whoami") {
-      append({ command, kind: "info", lines: ["Kapil Jangid · AI-Driven Full-Stack Developer", "Computer Science student at Silver Oak University · Data Science student at IIT Madras"] });
-      setPaletteOpen(false);
-      setAnnouncement("Verified profile summary shown.");
-      refocusInput();
+    if (rawCommand === "whoami") {
+      showOutput("Kapil Jangid · AI-Driven Full-Stack Developer · Computer Science student at Silver Oak University and Data Science student at IIT Madras.", "Verified profile summary shown.");
       return;
     }
 
-    const [verb, argument, ...rest] = command.split(/\s+/);
-    const destination = verb === "open" && rest.length === 0 ? argument : rest.length === 0 ? verb : "";
-    const definition = destination ? commandLookup.get(destination) : undefined;
-    if (!definition) {
-      append({ command, kind: "error", lines: ["Command not found. Select a suggestion or type \"help\"."] });
-      setAnnouncement("Command not found. Select a suggestion or type help.");
-      refocusInput();
+    const [verb, target, ...remainder] = rawCommand.split(/\s+/);
+    const commandName = verb === "open" && target && remainder.length === 0 ? target : remainder.length === 0 ? verb : "";
+    const command = commandLookup.get(commandName);
+
+    if (!command) {
+      showOutput("Command not found. Select a destination or type “help”.", "Unknown command. Type “help”.");
+      window.setTimeout(() => inputRef.current?.focus(), 0);
       return;
     }
 
-    setPaletteOpen(false);
-    if (definition.external) {
-      const external = externalCommands[definition.command as keyof typeof externalCommands];
-      append({ command, kind: "notice", lines: [`Opening ${external.label}…`] });
-      setAnnouncement(`Opening ${external.label}.`);
+    if (command.external) {
+      const external = externalCommands[command.command as keyof typeof externalCommands];
+      showOutput(`Opening ${external.label}…`);
       window.open(external.href, "_blank", "noopener,noreferrer");
       return;
     }
 
-    const route = routeLookup.get(definition.command);
+    const route = portfolioRoutes.find((item) => item.command === command.command);
     if (route) {
-      append({ command, kind: "notice", lines: [`Opening ${route.label}…`] });
-      setAnnouncement(`Opening ${route.label}.`);
+      showOutput(`Opening ${route.label}…`);
       router.push(route.href);
       return;
     }
 
-    append({ command, kind: "error", lines: ["Command not found. Select a suggestion or type \"help\"."] });
-    setAnnouncement("Command not found. Select a suggestion or type help.");
-    refocusInput();
-  }, [append, commandLookup, openPalette, refocusInput, routeLookup, router]);
+    showOutput("Command not found. Select a destination or type “help”.", "Unknown command. Type “help”.");
+  }, [commandLookup, router, showAll, showOutput, showQuick]);
 
   useEffect(() => {
-    output.current?.scrollTo({ top: output.current.scrollHeight, behavior: "auto" });
-  }, [entries]);
-
-  useEffect(() => {
-    if (!paletteOpen || !focusFirstPaletteCommand.current) return;
-    paletteButtons.current[0]?.focus();
-    focusFirstPaletteCommand.current = false;
-  }, [paletteOpen]);
+    if (bodyView !== "all" || !focusDirectoryCommand.current) return;
+    firstDirectoryCommandRef.current?.focus();
+    focusDirectoryCommand.current = false;
+  }, [bodyView]);
 
   useEffect(() => {
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        openPalette("input");
-        input.current?.focus();
+        showAll();
+        inputRef.current?.focus();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [openPalette]);
+  }, [showAll]);
 
-  const submit = (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const selected = resolvedActiveSuggestion >= 0 ? suggestions[resolvedActiveSuggestion] : undefined;
-    execute(selected?.command ?? value);
+    executeCommand(input);
   };
 
-  const onInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      if (suggestionsOpen) {
-        setSuggestionsOpen(false);
-        setActiveSuggestion(-1);
-      } else {
-        setValue("");
-        setHistoryIndex(-1);
-      }
+      if (bodyView === "all") showQuick(true);
+      else setInput("");
       return;
     }
-    if (event.key === "ArrowDown" && suggestions.length) {
+    if (event.key === "Tab" && completion) {
       event.preventDefault();
-      setSuggestionsOpen(true);
-      setActiveSuggestion((current) => current < suggestions.length - 1 ? current + 1 : 0);
+      setInput(completion.command);
+      setStatus(`Completed command: ${completion.command}.`);
       return;
     }
-    if (event.key === "ArrowUp" && suggestions.length) {
-      event.preventDefault();
-      setSuggestionsOpen(true);
-      setActiveSuggestion((current) => current <= 0 ? suggestions.length - 1 : current - 1);
-      return;
-    }
-    if (event.key === "ArrowUp" && history.length && !value) {
+    if (event.key === "ArrowUp" && history.length) {
       event.preventDefault();
       const nextIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
       setHistoryIndex(nextIndex);
-      setValue(history[nextIndex]);
+      setInput(history[nextIndex]);
       return;
     }
-    if (event.key === "ArrowDown" && history.length && !value) {
+    if (event.key === "ArrowDown" && history.length) {
       event.preventDefault();
       if (historyIndex <= 0) {
         setHistoryIndex(-1);
-        setValue("");
+        setInput("");
       } else {
         const nextIndex = historyIndex - 1;
         setHistoryIndex(nextIndex);
-        setValue(history[nextIndex]);
+        setInput(history[nextIndex]);
       }
-      return;
-    }
-    if (event.key === "Tab" && resolvedActiveSuggestion >= 0 && suggestions[resolvedActiveSuggestion]) {
-      event.preventDefault();
-      setValue(suggestions[resolvedActiveSuggestion].command);
-      setSuggestionsOpen(false);
-      setActiveSuggestion(-1);
     }
   };
 
-  const onPaletteKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+  const handleDirectoryKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
-      closePalette();
-      return;
+      showQuick(true);
     }
-    if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(event.key)) return;
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
-    const nextIndex = (paletteIndex + direction + commandDefinitions.length) % commandDefinitions.length;
-    setPaletteIndex(nextIndex);
-    paletteButtons.current[nextIndex]?.focus();
   };
 
+  const groupedCommands = (group: CommandGroup) => commands.filter((command) => command.group === group);
+
   return (
-    <section className="quick-terminal" aria-labelledby="quick-terminal-title">
-      <div className="quick-terminal-shell">
-        <div className="quick-terminal-heading">
-          <span><Terminal aria-hidden="true" /><h2 id="quick-terminal-title">Quick Access</h2></span>
-          <button ref={paletteTrigger} type="button" className="terminal-directory-trigger focus-ring" aria-expanded={paletteOpen} aria-controls={paletteId} onClick={() => openPalette("trigger")}>All commands <ChevronDown aria-hidden="true" /></button>
-        </div>
-        <section className="terminal-quick-commands" aria-label="Primary portfolio destinations">
-          {quickCommands.map((command) => <button type="button" key={command.id} onClick={() => execute(command.command)} className="focus-ring" aria-label={command.external ? command.description : `Open ${command.label} page`}><span>{command.label}</span><b aria-hidden="true">↗</b></button>)}
-        </section>
-        <div ref={output} className="quick-terminal-output" aria-label="Portfolio terminal status">
-          {entries.map((entry) => <div key={entry.id} className={`terminal-entry ${entry.kind}`}>
-            {entry.command && <p className="terminal-command"><span>kj@portfolio:~$</span> {entry.command}</p>}
-            {entry.lines?.map((line) => <p key={line}>{line}</p>)}
-          </div>)}
-        </div>
-        <form className="quick-terminal-input" onSubmit={submit}>
-          <label htmlFor="portfolio-terminal">Portfolio terminal command</label>
-          <span aria-hidden="true">kj@portfolio:~$</span>
-          <input ref={input} id="portfolio-terminal" value={value} onChange={(event) => { setValue(event.target.value); setSuggestionsOpen(Boolean(event.target.value.trim())); setActiveSuggestion(-1); }} onKeyDown={onInputKeyDown} autoComplete="off" spellCheck="false" placeholder="Type a command" role="combobox" aria-autocomplete="list" aria-expanded={suggestionsOpen && suggestions.length > 0} aria-controls={suggestionId} aria-activedescendant={resolvedActiveSuggestion >= 0 ? `${suggestionId}-${suggestions[resolvedActiveSuggestion]?.id}` : undefined} />
-          <small aria-hidden="true">Tab complete · ↑↓ history · Enter open</small>
-          {suggestionsOpen && <div id={suggestionId} className="terminal-suggestions" role="listbox" aria-label="Matching portfolio commands">
-            {suggestions.length ? suggestions.map((command, index) => <button type="button" id={`${suggestionId}-${command.id}`} key={command.id} role="option" aria-selected={index === resolvedActiveSuggestion} className="focus-ring" onMouseDown={(event) => event.preventDefault()} onClick={() => execute(command.command)}><b>{command.command}</b><span>{command.description}</span></button>) : <p>No matching command</p>}
+    <section className="home-terminal" aria-labelledby="home-terminal-title">
+      <div className="home-terminal__shell">
+        <header className="home-terminal__header">
+          <span className="home-terminal__title"><Terminal aria-hidden="true" /><h2 id="home-terminal-title">Quick Access</h2></span>
+          <span className="home-terminal__header-actions">
+            <span className="home-terminal__hint" title="Tab completes · Arrow keys recall history · Enter opens">Tab · ↑↓ · Enter</span>
+            <button ref={allCommandsTriggerRef} type="button" className="home-terminal__directory-trigger" aria-expanded={bodyView === "all"} aria-controls="home-terminal-body" onClick={() => bodyView === "all" ? showQuick() : showAll()}>{bodyView === "all" ? "Back to quick access" : "All commands"}</button>
+          </span>
+        </header>
+
+        <div id="home-terminal-body" className="home-terminal__body" aria-label={bodyView === "quick" ? "Quick portfolio destinations" : bodyView === "all" ? "Complete command directory" : "Command result"}>
+          {bodyView === "quick" && <div className="home-terminal__quick-grid">
+            {quickCommands.map((command) => <button key={command.id} type="button" onClick={() => executeCommand(command.command)} aria-label={command.external ? command.description : `Open ${command.label} page`}><span>{command.label}</span><b aria-hidden="true">↗</b></button>)}
           </div>}
+
+          {bodyView === "all" && <div className="home-terminal__directory" onKeyDown={handleDirectoryKeyDown}>
+            {commandGroupOrder.map((group) => <section key={group} className="home-terminal__group" aria-labelledby={`terminal-${group.replaceAll(" ", "-").toLowerCase()}`}>
+              <h3 id={`terminal-${group.replaceAll(" ", "-").toLowerCase()}`}>{group}</h3>
+              <div>{groupedCommands(group).map((command, index) => <button key={command.id} ref={group === "Portfolio" && index === 0 ? firstDirectoryCommandRef : undefined} type="button" onClick={() => executeCommand(command.command)} aria-label={command.external ? command.description : `${command.label}: ${command.description}`}><span>{command.label}</span><b aria-hidden="true">↗</b></button>)}</div>
+            </section>)}
+          </div>}
+
+          {bodyView === "output" && <div className="home-terminal__output"><p>{output}</p><button type="button" onClick={() => showQuick()}>Back to commands <span aria-hidden="true">↗</span></button></div>}
+        </div>
+
+        <p className="home-terminal__status" role="status" aria-live="polite" title={status}>{status}</p>
+
+        <form className="home-terminal__input" onSubmit={handleSubmit}>
+          <span aria-hidden="true">kj@portfolio:~$</span>
+          <input ref={inputRef} id="home-terminal-command" aria-label="Portfolio terminal command" value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={handleInputKeyDown} autoComplete="off" spellCheck="false" placeholder="Type a command" />
         </form>
-        {paletteOpen && <section id={paletteId} className="terminal-palette" aria-label="Complete command directory" onKeyDown={onPaletteKeyDown}>
-          {commandGroups.map((group) => <div className="terminal-palette-group" key={group.title} role="group" aria-labelledby={`terminal-group-${group.title.replaceAll(" ", "-").toLowerCase()}`}>
-            <h3 id={`terminal-group-${group.title.replaceAll(" ", "-").toLowerCase()}`}>{group.title}</h3>
-            <div>{commandDefinitions.filter((command) => command.group === group.title).map((command) => {
-              const commandIndex = commandDefinitions.indexOf(command);
-              return <button type="button" key={command.id} ref={(element) => { paletteButtons.current[commandIndex] = element; }} onFocus={() => setPaletteIndex(commandIndex)} onClick={() => execute(command.command)} className="focus-ring" aria-label={command.external ? command.description : `${command.label}: ${command.description}`}><b>{command.label}</b><span>{command.description}</span><i aria-hidden="true">↗</i></button>;
-            })}</div>
-          </div>)}
-        </section>}
       </div>
-      <p className="sr-only" role="status" aria-live="polite">{announcement}</p>
       <noscript><nav className="terminal-fallback" aria-label="Portfolio destinations">{portfolioRoutes.map((route) => <Link key={route.href} href={route.href}>{route.label}</Link>)}</nav></noscript>
     </section>
   );
