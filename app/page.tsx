@@ -1,5 +1,5 @@
-import { ArcProtocolOnePage } from "@/components/portfolio/ArcProtocolOnePage";
+import { ArmourEvolutionPortfolio } from "@/components/portfolio/ArmourEvolutionPortfolio";
 
 export default function Home() {
-  return <ArcProtocolOnePage />;
+  return <ArmourEvolutionPortfolio />;
 }

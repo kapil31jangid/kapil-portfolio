@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Rajdhani } from "next/font/google";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { CursorGlow } from "@/components/ui/CursorGlow";
 import { siteConfig } from "@/data/portfolio";
 import "./globals.css";
 
@@ -29,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.canonicalUrl),
   title: "Kapil Jangid | AI Driven Full Stack Developer",
   description:
-    "Portfolio of Kapil Jangid, an AI driven full stack developer and Computer Science student building intelligent products, scalable software and practical technology solutions.",
+    "Portfolio of Kapil Jangid, an AI driven full stack developer building intelligent products, scalable software and practical technology solutions.",
   keywords: [
     "Kapil Jangid",
     "AI Developer",
@@ -47,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "Kapil Jangid Portfolio",
     title: "Kapil Jangid | AI Driven Full Stack Developer",
     description:
-      "Portfolio of Kapil Jangid, an AI driven full stack developer and Computer Science student building intelligent products, scalable software and practical technology solutions.",
+      "Portfolio of Kapil Jangid, an AI driven full stack developer building intelligent products and scalable software.",
     images: [
       {
         url: siteConfig.ogImage,
@@ -112,17 +109,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
-      <body className="min-h-full bg-bg-primary text-text-primary antialiased">
+      <body className="min-h-full bg-void-black text-arc-white antialiased">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-cyan focus:px-4 focus:py-2 focus:text-bg-primary"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-red-600 focus:px-4 focus:py-2 focus:text-white"
         >
           Skip to main content
         </a>
-        <CursorGlow />
-        <Navbar />
         <main id="main-content">{children}</main>
-        <Footer />
       </body>
     </html>
   );
