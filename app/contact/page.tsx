@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function ContactPage() { return <PortfolioView view="contact" />; }
+import { redirect } from "next/navigation";
+
+export default function ContactPage() {
+  redirect("/#contact");
+}

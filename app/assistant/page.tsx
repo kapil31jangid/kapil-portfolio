@@ -1,2 +1,5 @@
-import { GokuBot } from "@/components/assistant/GokuBot";
-export default function AssistantPage() { return <GokuBot />; }
+import { redirect } from "next/navigation";
+
+export default function AssistantPage() {
+  redirect("/#gokubot");
+}

@@ -8,17 +8,14 @@ export type PortfolioRoute = {
 };
 
 export const portfolioRoutes: readonly PortfolioRoute[] = [
-  { id: "home", label: "Home", href: "/", command: "home", description: "Return to the home page" },
-  { id: "about", label: "About", href: "/about", command: "about", description: "Learn about Kapil" },
-  { id: "projects", label: "Projects", href: "/projects", command: "projects", description: "View Kapil’s projects", aliases: ["work"] },
-  { id: "journey", label: "Journey", href: "/journey", command: "journey", description: "Explore experience and community work" },
-  { id: "services", label: "Services", href: "/services", command: "services", description: "See ways to collaborate" },
-  { id: "contact", label: "Contact", href: "/contact", command: "contact", description: "Find contact options" },
-  { id: "certifications", label: "Certifications", href: "/certifications", command: "certifications", description: "Browse verified credentials", aliases: ["certs"] },
-  { id: "achievements", label: "Achievements", href: "/achievements", command: "achievements", description: "See milestones and recognition" },
-  { id: "blogs", label: "Blogs", href: "/blogs", command: "blogs", description: "Read published articles", aliases: ["blog"] },
-  { id: "open-source", label: "Open Source", href: "/open-source", command: "open-source", description: "Explore public code", aliases: ["opensource"] },
-  { id: "social", label: "Social", href: "/social", command: "social", description: "Open social profiles" },
-  { id: "gokubot", label: "GokuBot", href: "/assistant", command: "gokubot", description: "Start a conversation with GokuBot", aliases: ["assistant", "bot"] },
-  { id: "extras", label: "Extras", href: "/extras", command: "extras", description: "Explore more of Kapil’s interests" },
+  { id: "home", label: "Home", href: "#hero", command: "home", description: "Return to hero section" },
+  { id: "about", label: "About", href: "#about", command: "about", description: "Explore Kapil’s origin story" },
+  { id: "skills", label: "Skills", href: "#skills", command: "skills", description: "View technical capabilities", aliases: ["capabilities", "powers"] },
+  { id: "achievements", label: "Achievements", href: "#achievements", command: "achievements", description: "See verified credentials and achievements", aliases: ["certs", "victories"] },
+  { id: "archive", label: "Saga Archive", href: "#archive", command: "archive", description: "Browse community photo collage", aliases: ["saga", "gallery"] },
+  { id: "projects", label: "Projects", href: "#projects", command: "projects", description: "Explore product showcases", aliases: ["work", "missions"] },
+  { id: "journey", label: "Journey", href: "#journey", command: "journey", description: "Explore education, experience & leadership", aliases: ["chronicles", "timeline"] },
+  { id: "blogs", label: "Signals", href: "#blogs", command: "blogs", description: "Read published articles and open source code", aliases: ["articles", "signals"] },
+  { id: "gokubot", label: "GokuBot", href: "#gokubot", command: "gokubot", description: "Interact with Kapil’s portfolio AI assistant", aliases: ["assistant", "bot"] },
+  { id: "contact", label: "Contact", href: "#contact", command: "contact", description: "Get in touch with Kapil", aliases: ["connect"] },
 ];

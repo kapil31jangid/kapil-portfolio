@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function SocialPage() { return <PortfolioView view="social" />; }
+import { redirect } from "next/navigation";
+
+export default function SocialPage() {
+  redirect("/#hero");
+}

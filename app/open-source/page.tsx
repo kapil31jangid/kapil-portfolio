@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function OpenSourcePage() { return <PortfolioView view="open-source" />; }
+import { redirect } from "next/navigation";
+
+export default function OpenSourcePage() {
+  redirect("/#blogs");
+}

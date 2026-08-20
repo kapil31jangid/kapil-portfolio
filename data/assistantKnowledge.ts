@@ -30,7 +30,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: "Kapil Jangid",
     content: `${aboutParagraphs[0]} ${aboutParagraphs[1]}`,
     keywords: ["kapil", "introduction", "about", "developer", "full stack", "ai"],
-    route: "/about",
+    route: "/#about",
   },
   {
     id: "skills",
@@ -38,7 +38,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: "Technical skills",
     content: skillCategories.map((group) => `${group.title}: ${group.skills.join(", ")}.`).join(" "),
     keywords: ["skills", "technical", "strongest", "stack", "programming", "python", "typescript", "react", "next", "database", "ai"],
-    route: "/about",
+    route: "/#skills",
   },
   ...education.slice(0, 2).map((entry) => ({
     id: `education-${entry.institution}`,
@@ -46,7 +46,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: entry.institution,
     content: `${entry.qualification} at ${entry.institution}. ${entry.period}. Status: ${entry.status}.`,
     keywords: ["education", "studying", "study", "degree", "college", "iit", "silver oak", "btech", "data science"],
-    route: "/journey",
+    route: "/#journey",
   })),
   ...projects.map((project) => ({
     id: `project-${project.id}`,
@@ -54,7 +54,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: project.name,
     content: `${project.name} is ${project.tagline} It addresses this problem: ${project.problem} Key capabilities include ${project.features.slice(0, 3).join("; ")}. Verified stack: ${project.stack.join(", ")}. Status: ${project.status}. Kapil's contribution: ${project.contribution}`,
     keywords: [project.name.toLowerCase(), "project", "projects", "ai project", ...project.stack.map((item) => item.toLowerCase())],
-    route: "/projects",
+    route: "/#projects",
     externalUrl: project.live ?? project.github,
   })),
   ...services.map((service) => ({
@@ -63,7 +63,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: service.title,
     content: `${service.title}: ${service.description}`,
     keywords: ["service", "services", "work", "collaborate", "freelance", "mvp", "api", "documentation"],
-    route: "/services",
+    route: "/#contact",
   })),
   ...experience.map((entry) => ({
     id: `experience-${entry.organisation}`,
@@ -71,7 +71,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: `${entry.role} — ${entry.organisation}`,
     content: `${entry.role} at ${entry.organisation}, ${entry.start} to ${entry.end}. ${entry.responsibilities.join(" ")}`,
     keywords: ["journey", "experience", "community", "ieee", "sight", "workshop", "leadership", "humanitarian", "documentation"],
-    route: "/journey",
+    route: "/#journey",
   })),
   ...achievements.map((achievement) => ({
     id: `achievement-${achievement.title}`,
@@ -79,7 +79,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: achievement.title,
     content: `${achievement.title}. ${achievement.description}${achievement.date ? ` Date: ${achievement.date}.` : ""}`,
     keywords: ["achievement", "achievements", "hackathon", "recognition", "ieee"],
-    route: "/achievements",
+    route: "/#achievements",
   })),
   ...certifications.map((certification) => ({
     id: `certification-${certification.name}`,
@@ -87,7 +87,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: certification.name,
     content: `${certification.name}, issued by ${certification.issuer}.${certification.date ? ` ${certification.date}.` : ""}${certification.skills ? ` Relevant skills: ${certification.skills.join(", ")}.` : ""}`,
     keywords: ["certificate", "certification", "certifications", "badge", "google", "cloud", "ieee"],
-    route: "/certifications",
+    route: "/#achievements",
   })),
   {
     id: "availability",
@@ -95,7 +95,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: "Availability and contact",
     content: `${siteConfig.contactAvailability} Kapil can be reached at ${siteConfig.email}.`,
     keywords: ["contact", "email", "hire", "availability", "work", "collaborate", "resume", "résumé"],
-    route: "/contact",
+    route: "/#contact",
   },
   {
     id: "open-source",
@@ -103,7 +103,7 @@ export const assistantKnowledge: KnowledgeRecord[] = [
     title: "Public repositories",
     content: `Verified public project repositories include ${projects.filter((project) => project.github).map((project) => project.name).join(", ")}. No contribution totals or unverified activity are represented.`,
     keywords: ["open source", "github", "repository", "repositories", "contribution"],
-    route: "/open-source",
+    route: "/#blogs",
     externalUrl: socialLinks.find((link) => link.label === "GitHub")?.href,
   },
 ];

@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function AchievementsPage() { return <PortfolioView view="achievements" />; }
+import { redirect } from "next/navigation";
+
+export default function AchievementsPage() {
+  redirect("/#achievements");
+}

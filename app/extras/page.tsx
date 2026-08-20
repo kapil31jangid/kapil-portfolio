@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function ExtrasPage() { return <PortfolioView view="extras" />; }
+import { redirect } from "next/navigation";
+
+export default function ExtrasPage() {
+  redirect("/#archive");
+}

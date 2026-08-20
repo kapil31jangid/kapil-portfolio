@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function Home() { return <PortfolioView view="home" />; }
+import { ArcProtocolOnePage } from "@/components/portfolio/ArcProtocolOnePage";
+
+export default function Home() {
+  return <ArcProtocolOnePage />;
+}

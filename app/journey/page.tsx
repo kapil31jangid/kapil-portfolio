@@ -1,2 +1,5 @@
-import { PortfolioView } from "@/components/portfolio/PortfolioView";
-export default function JourneyPage() { return <PortfolioView view="journey" />; }
+import { redirect } from "next/navigation";
+
+export default function JourneyPage() {
+  redirect("/#journey");
+}
